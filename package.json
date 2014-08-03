@@ -1,7 +1,7 @@
 {
   "name": "hidefile",
   "description": "Hide files and directories on all platforms.",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "homepage": "https://github.com/stevenvachon/hidefile",
   "author": {
     "name": "Steven Vachon",
@@ -26,8 +26,11 @@
     "node": ">= 0.10"
   },
   "scripts": {
-    "test": "node node_modules/mocha/bin/mocha test/ --bail --reporter spec --check-leaks"
+    "test": "mocha test/ --bail --reporter spec --check-leaks"
   },
+  "files": [
+    "index.js"
+  ],
   "keywords": [
     "directory",
     "file",

@@ -1,4 +1,4 @@
-# hidefile [![NPM Version](http://badge.fury.io/js/hidefile.svg)](http://badge.fury.io/js/hidefile)
+# hidefile [![NPM Version](http://badge.fury.io/js/hidefile.svg)](http://badge.fury.io/js/hidefile) [![Build Status](https://secure.travis-ci.org/stevenvachon/hidefile.svg)](http://travis-ci.org/stevenvachon/hidefile) [![Dependency Status](https://david-dm.org/stevenvachon/hidefile.svg)](https://david-dm.org/stevenvachon/hidefile)
 
 > Hide files and directories on all platforms.
 
@@ -67,3 +67,6 @@ if (isWindows) {
 ```
 Unix: `result` is `true` if prefixed  
 Windows: `result` is `true` if prefixed *or* has "hidden" attribute  
+
+### Roadmap
+* Switch from [winattr](https://github.com/stevenvachon/winattr] to [fswin](https://github.com/xxoo/node-fswin) when it can retrieve attributes
