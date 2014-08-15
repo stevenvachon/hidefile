@@ -130,6 +130,13 @@ function stat_is(path, callback)
 
 
 
+function stat_prefixed(path)
+{
+	return pathModule.basename(path)[0] == prefix;
+}
+
+
+
 function stat_shouldBe(path, callback)
 {
 	stat(path, function(data)
@@ -150,6 +157,7 @@ function stringifyPath(pathObj)
 module.exports =
 {
 	hide: hide,
+	isDotPrefixed: stat_prefixed,
 	isHidden: stat_is,
 	reveal: reveal,
 	shouldBeHidden: stat_shouldBe

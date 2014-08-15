@@ -1,4 +1,4 @@
-# hidefile [![NPM Version](http://badge.fury.io/js/hidefile.svg)](http://badge.fury.io/js/hidefile) [![Build Status](https://secure.travis-ci.org/stevenvachon/hidefile.svg)](http://travis-ci.org/stevenvachon/hidefile) [![Dependency Status](https://david-dm.org/stevenvachon/hidefile.svg)](https://david-dm.org/stevenvachon/hidefile)
+# hidefile [![NPM Version](http://badge.fury.io/js/hidefile.svg)](http://badge.fury.io/js/hidefile) [![Build Status](https://secure.travis-ci.org/stevenvachon/hidefile.svg)](http://travis-ci.org/stevenvachon/hidefile) [![Build status](https://ci.appveyor.com/api/projects/status/n3obce2u8sbtu0ty)](https://ci.appveyor.com/project/stevenvachon/hidefile) [![Dependency Status](https://david-dm.org/stevenvachon/hidefile.svg)](https://david-dm.org/stevenvachon/hidefile)
 
 > Hide files and directories on all platforms.
 
@@ -27,6 +27,15 @@ var hidefile = require("hidefile");
 hidefile.hide("path/to/file.ext", function(err, newpath) {
 	if (!err) console.log(newpath);	//=> "path/to/.file.ext"
 });
+```
+
+#### isDotPrefixed(path)
+`path` - Path to file or directory  
+```js
+var hidefile = require("hidefile");
+
+console.log( hidefile.isDotPrefixed("path/to/.file.ext") );	//=> true
+console.log( hidefile.isDotPrefixed("path/to/file.ext") );	//=> false
 ```
 
 #### isHidden(path, callback)
@@ -69,4 +78,4 @@ Unix: `result` is `true` if prefixed
 Windows: `result` is `true` if prefixed *or* has "hidden" attribute  
 
 ### Roadmap
-* Switch from [winattr](https://github.com/stevenvachon/winattr] to [fswin](https://github.com/xxoo/node-fswin) when it can retrieve attributes
+* Switch from [winattr](https://github.com/stevenvachon/winattr) to [fswin](https://github.com/xxoo/node-fswin) when it can retrieve attributes

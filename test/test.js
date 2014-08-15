@@ -10,6 +10,29 @@ var describe_windowsOnly = eval(  util.isWindows ? "describe" : "describe.skip" 
 
 
 
+describe("isDotPrefixed()", function()
+{
+	it("should detect prefixed dot", function(done)
+	{
+		expect( hidefile.isDotPrefixed("path/to/.file.ext") ).to.be.true;
+		expect( hidefile.isDotPrefixed("path/to/.file") ).to.be.true;
+		expect( hidefile.isDotPrefixed(".file.ext") ).to.be.true;
+		expect( hidefile.isDotPrefixed(".file") ).to.be.true;
+		done();
+	});
+	
+	it("should detect missing prefixed dot", function(done)
+	{
+		expect( hidefile.isDotPrefixed("path/to/file.ext") ).to.be.false;
+		expect( hidefile.isDotPrefixed("path/to/file") ).to.be.false;
+		expect( hidefile.isDotPrefixed("file.ext") ).to.be.false;
+		expect( hidefile.isDotPrefixed("file") ).to.be.false;
+		done();
+	});
+});
+
+
+
 describe("isHidden()", function()
 {
 	describe_unixOnly("on Unix", function()
