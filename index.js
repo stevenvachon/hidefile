@@ -154,11 +154,29 @@ function stringifyPath(pathObj)
 
 
 
+function useExec()
+{
+	winattr.useExec();
+	return module.exports;
+}
+
+
+
+function useNative()
+{
+	winattr.useNative();
+	return module.exports;
+}
+
+
+
 module.exports =
 {
 	hide: hide,
 	isDotPrefixed: stat_prefixed,
 	isHidden: stat_is,
 	reveal: reveal,
-	shouldBeHidden: stat_shouldBe
+	shouldBeHidden: stat_shouldBe,
+	useExec: useExec,
+	useNative: useNative
 };

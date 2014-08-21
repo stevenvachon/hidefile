@@ -10,394 +10,410 @@ var describe_windowsOnly = eval(  util.isWindows ? "describe" : "describe.skip" 
 
 
 
-describe("isDotPrefixed()", function()
+["useExec","useNative"].forEach( function(which)
 {
-	it("should detect prefixed dot", function(done)
+	describe(which, function()
 	{
-		expect( hidefile.isDotPrefixed("path/to/.file.ext") ).to.be.true;
-		expect( hidefile.isDotPrefixed("path/to/.file") ).to.be.true;
-		expect( hidefile.isDotPrefixed(".file.ext") ).to.be.true;
-		expect( hidefile.isDotPrefixed(".file") ).to.be.true;
-		done();
-	});
-	
-	it("should detect missing prefixed dot", function(done)
-	{
-		expect( hidefile.isDotPrefixed("path/to/file.ext") ).to.be.false;
-		expect( hidefile.isDotPrefixed("path/to/file") ).to.be.false;
-		expect( hidefile.isDotPrefixed("file.ext") ).to.be.false;
-		expect( hidefile.isDotPrefixed("file") ).to.be.false;
-		done();
-	});
-});
-
-
-
-describe("isHidden()", function()
-{
-	describe_unixOnly("on Unix", function()
-	{
-		it("should pass with prefixed-only files", function(done)
+		before( function(done)
 		{
-			util.newFile(util.tempHidden, function(path)
+			hidefile[which]();
+			winattr[which]();
+			util[which]();
+			done();
+		});
+		
+		
+		
+		describe("isDotPrefixed()", function()
+		{
+			it("should detect prefixed dot", function(done)
 			{
-				hidefile.isHidden(path, function(result)
-				{
-					fs.unlinkSync(path);
-					expect(result).to.be.true;
-					done();
-				});
+				expect( hidefile.isDotPrefixed("path/to/.file.ext") ).to.be.true;
+				expect( hidefile.isDotPrefixed("path/to/.file") ).to.be.true;
+				expect( hidefile.isDotPrefixed(".file.ext") ).to.be.true;
+				expect( hidefile.isDotPrefixed(".file") ).to.be.true;
+				done();
+			});
+			
+			it("should detect missing prefixed dot", function(done)
+			{
+				expect( hidefile.isDotPrefixed("path/to/file.ext") ).to.be.false;
+				expect( hidefile.isDotPrefixed("path/to/file") ).to.be.false;
+				expect( hidefile.isDotPrefixed("file.ext") ).to.be.false;
+				expect( hidefile.isDotPrefixed("file") ).to.be.false;
+				done();
 			});
 		});
 		
-		it("should pass with prefixed-only folders", function(done)
-		{
-			util.newFolder(util.tempHidden, function(path)
-			{
-				hidefile.isHidden(path, function(result)
-				{
-					fs.rmdirSync(path);
-					expect(result).to.be.true;
-					done();
-				});
-			});
-		});
-	});
-	
-	describe_windowsOnly("on Windows", function()
-	{
-		it("should fail with prefixed-only files", function(done)
-		{
-			util.newFile(util.tempHidden, function(path)
-			{
-				hidefile.isHidden(path, function(result)
-				{
-					fs.unlinkSync(path);
-					expect(result).to.be.false;
-					done();
-				});
-			});
-		});
 		
-		it("should fail with prefixed-only folders", function(done)
-		{
-			util.newFolder(util.tempHidden, function(path)
-			{
-				hidefile.isHidden(path, function(result)
-				{
-					fs.rmdirSync(path);
-					expect(result).to.be.false;
-					done();
-				});
-			});
-		});
 		
-		it("should fail with attribute-only files", function(done)
+		describe("isHidden()", function()
 		{
-			util.newFile(function(path)
+			describe_unixOnly("on Unix", function()
 			{
-				winattr.set(path, {hidden:true}, function(error)
+				it("should pass with prefixed-only files", function(done)
 				{
-					hidefile.isHidden(path, function(result)
+					util.newFile(util.tempHidden, function(path)
 					{
-						fs.unlinkSync(path);
-						expect(error).to.be.null;
-						expect(result).to.be.false;
-						done();
+						hidefile.isHidden(path, function(result)
+						{
+							fs.unlinkSync(path);
+							expect(result).to.be.true;
+							done();
+						});
+					});
+				});
+				
+				it("should pass with prefixed-only folders", function(done)
+				{
+					util.newFolder(util.tempHidden, function(path)
+					{
+						hidefile.isHidden(path, function(result)
+						{
+							fs.rmdirSync(path);
+							expect(result).to.be.true;
+							done();
+						});
+					});
+				});
+			});
+			
+			describe_windowsOnly("on Windows", function()
+			{
+				it("should fail with prefixed-only files", function(done)
+				{
+					util.newFile(util.tempHidden, function(path)
+					{
+						hidefile.isHidden(path, function(result)
+						{
+							fs.unlinkSync(path);
+							expect(result).to.be.false;
+							done();
+						});
+					});
+				});
+				
+				it("should fail with prefixed-only folders", function(done)
+				{
+					util.newFolder(util.tempHidden, function(path)
+					{
+						hidefile.isHidden(path, function(result)
+						{
+							fs.rmdirSync(path);
+							expect(result).to.be.false;
+							done();
+						});
+					});
+				});
+				
+				it("should fail with attribute-only files", function(done)
+				{
+					util.newFile(function(path)
+					{
+						winattr.set(path, {hidden:true}, function(error)
+						{
+							hidefile.isHidden(path, function(result)
+							{
+								fs.unlinkSync(path);
+								expect(error).to.be.null;
+								expect(result).to.be.false;
+								done();
+							});
+						});
+					});
+				});
+				
+				it("should fail with attribute-only folders", function(done)
+				{
+					util.newFolder(function(path)
+					{
+						winattr.set(path, {hidden:true}, function(error)
+						{
+							hidefile.isHidden(path, function(result)
+							{
+								fs.rmdirSync(path);
+								expect(error).to.be.null;
+								expect(result).to.be.false;
+								done();
+							});
+						});
 					});
 				});
 			});
 		});
 		
-		it("should fail with attribute-only folders", function(done)
+		
+		
+		describe("shouldBeHidden()", function()
 		{
-			util.newFolder(function(path)
+			it("should pass for prefixed-only files", function(done)
 			{
-				winattr.set(path, {hidden:true}, function(error)
-				{
-					hidefile.isHidden(path, function(result)
-					{
-						fs.rmdirSync(path);
-						expect(error).to.be.null;
-						expect(result).to.be.false;
-						done();
-					});
-				});
-			});
-		});
-	});
-});
-
-
-
-describe("shouldBeHidden()", function()
-{
-	it("should pass for prefixed-only files", function(done)
-	{
-		util.newFile(util.tempHidden, function(path)
-		{
-			hidefile.shouldBeHidden(path, function(result)
-			{
-				fs.unlinkSync(path);
-				expect(result).to.be.true;
-				done();
-			});
-		});
-	});
-	
-	it("should pass for prefixed-only folders", function(done)
-	{
-		util.newFolder(util.tempHidden, function(path)
-		{
-			hidefile.shouldBeHidden(path, function(result)
-			{
-				fs.rmdirSync(path);
-				expect(result).to.be.true;
-				done();
-			});
-		});
-	});
-	
-	it("should fail for unhidden files", function(done)
-	{
-		util.newFile(function(path)
-		{
-			hidefile.shouldBeHidden(path, function(result)
-			{
-				fs.unlinkSync(path);
-				expect(result).to.be.false;
-				done();
-			});
-		});
-	});
-	
-	it("should fail for unhidden folders", function(done)
-	{
-		util.newFolder(function(path)
-		{
-			hidefile.shouldBeHidden(path, function(result)
-			{
-				fs.rmdirSync(path);
-				expect(result).to.be.false;
-				done();
-			});
-		});
-	});
-	
-	describe_windowsOnly("on Windows", function()
-	{
-		it("should pass for attribute-only files", function(done)
-		{
-			util.newFile(function(path)
-			{
-				winattr.set(path, {hidden:true}, function(error)
+				util.newFile(util.tempHidden, function(path)
 				{
 					hidefile.shouldBeHidden(path, function(result)
 					{
 						fs.unlinkSync(path);
-						expect(error).to.be.null;
 						expect(result).to.be.true;
 						done();
 					});
 				});
 			});
-		});
-		
-		it("should pass for attribute-only folders", function(done)
-		{
-			util.newFolder(function(path)
+			
+			it("should pass for prefixed-only folders", function(done)
 			{
-				winattr.set(path, {hidden:true}, function(error)
+				util.newFolder(util.tempHidden, function(path)
 				{
 					hidefile.shouldBeHidden(path, function(result)
 					{
 						fs.rmdirSync(path);
-						expect(error).to.be.null;
 						expect(result).to.be.true;
 						done();
 					});
 				});
 			});
-		});
-	});
-});
-
-
-
-describe("Files", function()
-{
-	describe("that are not hidden", function()
-	{
-		beforeEach(function(done){ util.newFile(function(){ done() }) });
-		
-		it("should register as such", function(done)
-		{
-			hidefile.isHidden(util.temp, function(result)
+			
+			it("should fail for unhidden files", function(done)
 			{
-				fs.unlinkSync(util.temp);
-				expect(result).to.be.false;
-				done();
-			});
-		});
-		
-		it("should hide", function(done)
-		{
-			hidefile.hide(util.temp, function(error, newpath)
-			{
-				hidefile.isHidden(newpath, function(result)
+				util.newFile(function(path)
 				{
-					fs.unlinkSync( error ? util.temp : newpath );
-					expect(error).to.be.null;
-					expect(result).to.be.true;
-					done();
+					hidefile.shouldBeHidden(path, function(result)
+					{
+						fs.unlinkSync(path);
+						expect(result).to.be.false;
+						done();
+					});
+				});
+			});
+			
+			it("should fail for unhidden folders", function(done)
+			{
+				util.newFolder(function(path)
+				{
+					hidefile.shouldBeHidden(path, function(result)
+					{
+						fs.rmdirSync(path);
+						expect(result).to.be.false;
+						done();
+					});
+				});
+			});
+			
+			describe_windowsOnly("on Windows", function()
+			{
+				it("should pass for attribute-only files", function(done)
+				{
+					util.newFile(function(path)
+					{
+						winattr.set(path, {hidden:true}, function(error)
+						{
+							hidefile.shouldBeHidden(path, function(result)
+							{
+								fs.unlinkSync(path);
+								expect(error).to.be.null;
+								expect(result).to.be.true;
+								done();
+							});
+						});
+					});
+				});
+				
+				it("should pass for attribute-only folders", function(done)
+				{
+					util.newFolder(function(path)
+					{
+						winattr.set(path, {hidden:true}, function(error)
+						{
+							hidefile.shouldBeHidden(path, function(result)
+							{
+								fs.rmdirSync(path);
+								expect(error).to.be.null;
+								expect(result).to.be.true;
+								done();
+							});
+						});
+					});
 				});
 			});
 		});
 		
-		it("should reveal anyway", function(done)
+		
+		
+		describe("Files", function()
 		{
-			hidefile.reveal(util.temp, function(error, newpath)
+			describe("that are not hidden", function()
 			{
-				hidefile.isHidden(newpath, function(result)
+				beforeEach(function(done){ util.newFile(function(){ done() }) });
+				
+				it("should register as such", function(done)
 				{
-					fs.unlinkSync(util.temp);
-					expect(error).to.be.null;
-					expect(result).to.be.false;
-					done();
+					hidefile.isHidden(util.temp, function(result)
+					{
+						fs.unlinkSync(util.temp);
+						expect(result).to.be.false;
+						done();
+					});
+				});
+				
+				it("should hide", function(done)
+				{
+					hidefile.hide(util.temp, function(error, newpath)
+					{
+						hidefile.isHidden(newpath, function(result)
+						{
+							fs.unlinkSync( error ? util.temp : newpath );
+							expect(error).to.be.null;
+							expect(result).to.be.true;
+							done();
+						});
+					});
+				});
+				
+				it("should reveal anyway", function(done)
+				{
+					hidefile.reveal(util.temp, function(error, newpath)
+					{
+						hidefile.isHidden(newpath, function(result)
+						{
+							fs.unlinkSync(util.temp);
+							expect(error).to.be.null;
+							expect(result).to.be.false;
+							done();
+						});
+					});
 				});
 			});
-		});
-	});
-	
-	describe("that are hidden", function()
-	{
-		beforeEach(function(done){ util.newFile(true,function(){ done() }) });
-		
-		it("should register as such", function(done)
-		{
-			hidefile.isHidden(util.tempHidden, function(result)
+			
+			describe("that are hidden", function()
 			{
-				fs.unlinkSync(util.tempHidden);
-				expect(result).to.be.true;
-				done();
-			});
-		});
-		
-		it("should hide anyway", function(done)
-		{
-			hidefile.hide(util.tempHidden, function(error, newpath)
-			{
-				hidefile.isHidden(newpath, function(result)
+				beforeEach(function(done){ util.newFile(true,function(){ done() }) });
+				
+				it("should register as such", function(done)
 				{
-					fs.unlinkSync(util.tempHidden);
-					expect(error).to.be.null;
-					expect(result).to.be.true;
-					done();
+					hidefile.isHidden(util.tempHidden, function(result)
+					{
+						fs.unlinkSync(util.tempHidden);
+						expect(result).to.be.true;
+						done();
+					});
 				});
-			});
-		});
-		
-		it("should reveal", function(done)
-		{
-			hidefile.reveal(util.tempHidden, function(error, newpath)
-			{
-				hidefile.isHidden(newpath, function(result)
+				
+				it("should hide anyway", function(done)
 				{
-					fs.unlinkSync( error ? util.tempHidden : newpath );
-					expect(error).to.be.null;
-					expect(result).to.be.false;
-					done();
+					hidefile.hide(util.tempHidden, function(error, newpath)
+					{
+						hidefile.isHidden(newpath, function(result)
+						{
+							fs.unlinkSync(util.tempHidden);
+							expect(error).to.be.null;
+							expect(result).to.be.true;
+							done();
+						});
+					});
 				});
-			});
-		});
-	});
-});
-
-
-
-describe("Folders", function()
-{
-	describe("that are not hidden", function()
-	{
-		beforeEach(function(done){ util.newFolder(function(){ done() }) });
-		
-		it("should register as such", function(done)
-		{
-			hidefile.isHidden(util.temp, function(result)
-			{
-				fs.rmdirSync(util.temp);
-				expect(result).to.be.false;
-				done();
-			});
-		});
-		
-		it("should hide", function(done)
-		{
-			hidefile.hide(util.temp, function(error, newpath)
-			{
-				hidefile.isHidden(newpath, function(result)
+				
+				it("should reveal", function(done)
 				{
-					fs.rmdirSync( error ? util.temp : newpath );
-					expect(error).to.be.null;
-					expect(result).to.be.true;
-					done();
-				});
-			});
-		});
-		
-		it("should reveal anyway", function(done)
-		{
-			hidefile.reveal(util.temp, function(error, newpath)
-			{
-				hidefile.isHidden(newpath, function(result)
-				{
-					fs.rmdirSync(util.temp);
-					expect(error).to.be.null;
-					expect(result).to.be.false;
-					done();
-				});
-			});
-		});
-	});
-	
-	describe("that are hidden", function()
-	{
-		beforeEach(function(done){ util.newFolder(true,function(){ done() }) });
-		
-		it("should register as such", function(done)
-		{
-			hidefile.isHidden(util.tempHidden, function(result)
-			{
-				fs.rmdirSync(util.tempHidden);
-				expect(result).to.be.true;
-				done();
-			});
-		});
-		
-		it("should hide anyway", function(done)
-		{
-			hidefile.hide(util.tempHidden, function(error, newpath)
-			{
-				hidefile.isHidden(newpath, function(result)
-				{
-					fs.rmdirSync(util.tempHidden);
-					expect(error).to.be.null;
-					expect(result).to.be.true;
-					done();
+					hidefile.reveal(util.tempHidden, function(error, newpath)
+					{
+						hidefile.isHidden(newpath, function(result)
+						{
+							fs.unlinkSync( error ? util.tempHidden : newpath );
+							expect(error).to.be.null;
+							expect(result).to.be.false;
+							done();
+						});
+					});
 				});
 			});
 		});
 		
-		it("should reveal", function(done)
+		
+		
+		describe("Folders", function()
 		{
-			hidefile.reveal(util.tempHidden, function(error, newpath)
+			describe("that are not hidden", function()
 			{
-				hidefile.isHidden(newpath, function(result)
+				beforeEach(function(done){ util.newFolder(function(){ done() }) });
+				
+				it("should register as such", function(done)
 				{
-					fs.rmdirSync( error ? util.tempHidden : newpath );
-					expect(error).to.be.null;
-					expect(result).to.be.false;
-					done();
+					hidefile.isHidden(util.temp, function(result)
+					{
+						fs.rmdirSync(util.temp);
+						expect(result).to.be.false;
+						done();
+					});
+				});
+				
+				it("should hide", function(done)
+				{
+					hidefile.hide(util.temp, function(error, newpath)
+					{
+						hidefile.isHidden(newpath, function(result)
+						{
+							fs.rmdirSync( error ? util.temp : newpath );
+							expect(error).to.be.null;
+							expect(result).to.be.true;
+							done();
+						});
+					});
+				});
+				
+				it("should reveal anyway", function(done)
+				{
+					hidefile.reveal(util.temp, function(error, newpath)
+					{
+						hidefile.isHidden(newpath, function(result)
+						{
+							fs.rmdirSync(util.temp);
+							expect(error).to.be.null;
+							expect(result).to.be.false;
+							done();
+						});
+					});
+				});
+			});
+			
+			describe("that are hidden", function()
+			{
+				beforeEach(function(done){ util.newFolder(true,function(){ done() }) });
+				
+				it("should register as such", function(done)
+				{
+					hidefile.isHidden(util.tempHidden, function(result)
+					{
+						fs.rmdirSync(util.tempHidden);
+						expect(result).to.be.true;
+						done();
+					});
+				});
+				
+				it("should hide anyway", function(done)
+				{
+					hidefile.hide(util.tempHidden, function(error, newpath)
+					{
+						hidefile.isHidden(newpath, function(result)
+						{
+							fs.rmdirSync(util.tempHidden);
+							expect(error).to.be.null;
+							expect(result).to.be.true;
+							done();
+						});
+					});
+				});
+				
+				it("should reveal", function(done)
+				{
+					hidefile.reveal(util.tempHidden, function(error, newpath)
+					{
+						hidefile.isHidden(newpath, function(result)
+						{
+							fs.rmdirSync( error ? util.tempHidden : newpath );
+							expect(error).to.be.null;
+							expect(result).to.be.false;
+							done();
+						});
+					});
 				});
 			});
 		});

@@ -1,7 +1,7 @@
 {
   "name": "hidefile",
   "description": "Hide files and directories on all platforms.",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "homepage": "https://github.com/stevenvachon/hidefile",
   "author": {
     "name": "Steven Vachon",
@@ -16,7 +16,7 @@
     "url": "https://github.com/stevenvachon/hidefile/issues"
   },
   "dependencies": {
-    "winattr": "~0.1"
+    "winattr": "~0.2"
   },
   "devDependencies": {
     "chai": "^1.9",

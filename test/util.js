@@ -111,10 +111,28 @@ function newFolder(path, hidden, callback)
 
 
 
+function useExec()
+{
+	hidefile.useExec();
+	return hidefile;
+}
+
+
+
+function useNative()
+{
+	hidefile.useNative();
+	return hidefile;
+}
+
+
+
 module.exports =
 {
 	newFile: newFile,
 	newFolder: newFolder,
+	useExec: useExec,
+	useNative: useNative,
 	
 	isWindows: windows,
 	temp: temp,

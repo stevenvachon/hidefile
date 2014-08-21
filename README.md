@@ -77,5 +77,14 @@ if (isWindows) {
 Unix: `result` is `true` if prefixed  
 Windows: `result` is `true` if prefixed *or* has "hidden" attribute  
 
-### Roadmap
-* Switch from [winattr](https://github.com/stevenvachon/winattr) to [fswin](https://github.com/xxoo/node-fswin) when it can retrieve attributes
+#### useExec()
+[More info](https://github.com/stevenvachon/winattr/#useexec). Used by default.
+
+#### useNative()
+[More info](https://github.com/stevenvachon/winattr/#usenative). Much faster than `useExec()`.
+
+### Changelog
+* 0.2.0 updated [winattr](https://npmjs.org/package/winattr), added `useExec()`,`useNative()`
+* 0.1.2 tested on Windows
+* 0.1.1 package.json optimization
+* 0.1.0 initial release
