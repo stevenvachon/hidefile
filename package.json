@@ -1,7 +1,8 @@
 {
   "name": "hidefile",
   "description": "Hide files and directories on all platforms.",
-  "version": "0.2.0",
+  "version": "1.0.0",
+  "license": "MIT",
   "homepage": "https://github.com/stevenvachon/hidefile",
   "author": {
     "name": "Steven Vachon",
@@ -16,11 +17,11 @@
     "url": "https://github.com/stevenvachon/hidefile/issues"
   },
   "dependencies": {
-    "winattr": "~0.2"
+    "winattr": "^1.0.0"
   },
   "devDependencies": {
-    "chai": "^1.9",
-    "mocha": "^1.21"
+    "chai": "^3.0.0",
+    "mocha": "^2.2.5"
   },
   "engines": {
     "node": ">= 0.10"
@@ -29,15 +30,18 @@
     "test": "mocha test/ --bail --reporter spec --check-leaks"
   },
   "files": [
-    "index.js"
+    "index.js",
+    "license"
   ],
   "keywords": [
     "directory",
+    "dotfile",
     "file",
     "folder",
     "fs",
     "hidden",
     "hide",
+    "native",
     "windows"
   ]
 }
