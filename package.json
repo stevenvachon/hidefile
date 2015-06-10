@@ -1,7 +1,7 @@
 {
   "name": "hidefile",
   "description": "Hide files and directories on all platforms.",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "license": "MIT",
   "homepage": "https://github.com/stevenvachon/hidefile",
   "author": {
@@ -17,10 +17,10 @@
     "url": "https://github.com/stevenvachon/hidefile/issues"
   },
   "dependencies": {
-    "winattr": "^1.0.0"
+    "winattr": "^1.1.0"
   },
   "devDependencies": {
-    "chai": "^3.0.0",
+    "chai": "^3.2.0",
     "mocha": "^2.2.5"
   },
   "engines": {

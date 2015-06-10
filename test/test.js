@@ -13,7 +13,7 @@ var describe_windowsOnly = util.isWindows===true  ? describe : describe.skip;
 describe("", function() {
 
 // AppVeyor (non-pro) is slow
-if (util.isWindows===true) this.timeout(5000);
+if (util.isWindows===true) this.timeout(10000);
 
 
 

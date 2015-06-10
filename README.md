@@ -11,11 +11,9 @@ Windows:
 
 A native binding is used, offering great performance. As a contingency in case that fails, functionality will silently revert to a command line, though it is considerably slower.
 
-Note: The binding does not currently work in any version of io.js
-
 ## Getting Started
 
-[Node.js](http://nodejs.org/) `~0.10` is required. To install, type this at the command line:
+[Node.js](http://nodejs.org/) `>= 0.10` is required. To install, type this at the command line:
 ```
 npm install hidefile --save-dev
 ```
@@ -114,6 +112,7 @@ if (isWindows) {
 ```
 
 ### Changelog
+* 1.1.0 added binding support to Node.js v4
 * 1.0.0
   * added `hideSync()`,`isHiddenSync()`,`revealSync()`,`shouldBeHiddenSync()`
   * removed `useExec()`,`useNative()`
