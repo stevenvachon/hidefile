@@ -11,25 +11,27 @@ Windows:
 
 A native binding is used, offering great performance. As a contingency in case that fails, functionality will silently revert to a command line, though it is considerably slower.
 
-## Getting Started
 
-[Node.js](http://nodejs.org/) `>= 0.10` is required. To install, type this at the command line:
+## Installation
+
+[Node.js](http://nodejs.org/) `>= 4` is required. To install, type this at the command line:
 ```
-npm install hidefile --save-dev
+npm install hidefile
 ```
 
-### Methods
 
-#### hide(path, callback)
+## Methods
+
+### `hide(path, callback)`
 `path` - Path to file or directory  
 `callback(err,newpath)` - A callback which is called upon completion  
 ```js
 hidefile.hide("path/to/file.ext", function(err, newpath) {
-    if (err==null) console.log(newpath);  //-> "path/to/.file.ext"
+    if (err == null) console.log(newpath);  //-> "path/to/.file.ext"
 });
 ```
 
-#### hideSync(path)
+### `hideSync(path)`
 `path` - Path to file or directory  
 
 Throws an error if the file or dir cannot be found/accessed.
@@ -39,25 +41,25 @@ var newpath = hidefile.hideSync("path/to/file.ext");
 console.log(newpath);  //-> "path/to/.file.ext"
 ```
 
-#### isDotPrefixed(path)
+### `isDotPrefixed(path)`
 `path` - Path to file or directory  
 ```js
 console.log( hidefile.isDotPrefixed("path/to/.file.ext") );  //-> true
 console.log( hidefile.isDotPrefixed("path/to/file.ext") );   //-> false
 ```
 
-#### isHidden(path, callback)
+### `isHidden(path, callback)`
 `path` - Path to file or directory  
 `callback(result)` - A callback which is called upon completion  
 ```js
 hidefile.isHidden("path/to/file.ext", function(err, result) {
-    if (err==null) console.log(result);  //-> false
+    if (err == null) console.log(result);  //-> false
 });
 ```
 Unix: `result` is `true` if prefixed.  
 Windows: `result` is `true` if prefixed *and* has "hidden" attribute, `false` if only prefixed.  
 
-#### isHiddenSync(path)
+### `isHiddenSync(path)`
 `path` - Path to file or directory  
 
 Throws an error if the file or dir cannot be found/accessed.
@@ -67,16 +69,16 @@ var result = hidefile.isHiddenSync("path/to/file.ext");
 console.log(result);  //-> false
 ```
 
-#### reveal(path, callback)
+### `reveal(path, callback)`
 `path` - Path to file or directory  
 `callback(err,newpath)` - A callback which is called upon completion  
 ```js
 hidefile.reveal("path/to/.file.ext", function(err, newpath) {
-    if (err==null) console.log(newpath);  //-> "path/to/file.ext"
+    if (err == null) console.log(newpath);  //-> "path/to/file.ext"
 });
 ```
 
-#### revealSync(path)
+### `revealSync(path)`
 `path` - Path to file or directory  
 
 Throws an error if the file or dir cannot be found/accessed.
@@ -86,20 +88,20 @@ var newpath = hidefile.revealSync("path/to/.file.ext");
 console.log(newpath);  //-> "path/to/file.ext"
 ```
 
-#### shouldBeHidden(path, callback)
+### `shouldBeHidden(path, callback)`
 `path` - Path to file or directory  
 `callback(result)` - A callback which is called upon completion  
 ```js
 if (isWindows) {
     hidefile.shouldBeHidden("path/to/.file.ext", function(err, result) {
-        if (err==null) console.log(result);  //-> true
+        if (err == null) console.log(result);  //-> true
     });
 }
 ```
 Unix: `result` is `true` if prefixed.  
 Windows: `result` is `true` if prefixed *or* has "hidden" attribute.  
 
-#### shouldBeHiddenSync(path)
+### `shouldBeHiddenSync(path)`
 `path` - Path to file or directory  
 
 Throws an error if the file or dir cannot be found/accessed.
@@ -111,7 +113,9 @@ if (isWindows) {
 }
 ```
 
-### Changelog
+
+## Changelog
+* 2.0.0 removed support for Node.js v0.10 and v0.12
 * 1.1.0 added binding support to Node.js v4
 * 1.0.0
   * added `hideSync()`,`isHiddenSync()`,`revealSync()`,`shouldBeHiddenSync()`

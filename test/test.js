@@ -1,19 +1,12 @@
 "use strict";
-var expect = require("chai").expect;
-var winattr = require("winattr");
+const expect = require("chai").expect;
+const winattr = require("winattr");
 
-var hidefile = require("../");
-var util = require("./util");
+const helpers = require("./helpers");
+const hidefile = require("../");
 
-var describe_unixOnly    = util.isWindows===false ? describe : describe.skip;
-var describe_windowsOnly = util.isWindows===true  ? describe : describe.skip;
-
-
-
-describe("", function() {
-
-// AppVeyor (non-pro) is slow
-if (util.isWindows===true) this.timeout(10000);
+const describe_unixOnly    = helpers.isWindows===false ? describe : describe.skip;
+const describe_windowsOnly = helpers.isWindows===true  ? describe : describe.skip;
 
 
 
@@ -57,7 +50,7 @@ describe("isHidden()", function()
 		it("should be true for prefix-only files", function(done)
 		{
 			// No need to create file on Unix as it's all string-based
-			hidefile.isHidden(util.tempHidden, function(error, result)
+			hidefile.isHidden(helpers.tempHidden, function(error, result)
 			{
 				expect(error).to.be.null;
 				expect(result).to.be.true;
@@ -68,7 +61,7 @@ describe("isHidden()", function()
 		it("should be true for prefix-only folders", function(done)
 		{
 			// No need to create file on Unix as it's all string-based
-			hidefile.isHidden(util.tempHidden, function(error, result)
+			hidefile.isHidden(helpers.tempHidden, function(error, result)
 			{
 				expect(error).to.be.null;
 				expect(result).to.be.true;
@@ -81,11 +74,11 @@ describe("isHidden()", function()
 	{
 		it("should be false for unprefixed-unattributed files", function(done)
 		{
-			util.newFile(util.tempVisible);
+			helpers.newFile(helpers.tempVisible);
 			
-			hidefile.isHidden(util.tempVisible, function(error, result)
+			hidefile.isHidden(helpers.tempVisible, function(error, result)
 			{
-				util.removeFile(util.tempVisible);
+				helpers.removeFile(helpers.tempVisible);
 				expect(error).to.be.null;
 				expect(result).to.be.false;
 				done();
@@ -94,11 +87,11 @@ describe("isHidden()", function()
 		
 		it("should be false for unprefixed-unattributed folders", function(done)
 		{
-			util.newFolder(util.tempVisible);
+			helpers.newFolder(helpers.tempVisible);
 			
-			hidefile.isHidden(util.tempVisible, function(error, result)
+			hidefile.isHidden(helpers.tempVisible, function(error, result)
 			{
-				util.removeFolder(util.tempVisible);
+				helpers.removeFolder(helpers.tempVisible);
 				expect(error).to.be.null;
 				expect(result).to.be.false;
 				done();
@@ -107,11 +100,11 @@ describe("isHidden()", function()
 		
 		it("should be false for prefix-only files", function(done)
 		{
-			util.newFile(util.tempHidden);
+			helpers.newFile(helpers.tempHidden);
 			
-			hidefile.isHidden(util.tempHidden, function(error, result)
+			hidefile.isHidden(helpers.tempHidden, function(error, result)
 			{
-				util.removeFile(util.tempHidden);
+				helpers.removeFile(helpers.tempHidden);
 				expect(error).to.be.null;
 				expect(result).to.be.false;
 				done();
@@ -120,11 +113,11 @@ describe("isHidden()", function()
 		
 		it("should be false for prefix-only folders", function(done)
 		{
-			util.newFolder(util.tempHidden);
+			helpers.newFolder(helpers.tempHidden);
 			
-			hidefile.isHidden(util.tempHidden, function(error, result)
+			hidefile.isHidden(helpers.tempHidden, function(error, result)
 			{
-				util.removeFolder(util.tempHidden);
+				helpers.removeFolder(helpers.tempHidden);
 				expect(error).to.be.null;
 				expect(result).to.be.false;
 				done();
@@ -133,11 +126,11 @@ describe("isHidden()", function()
 		
 		it("should be false for attribute-only files", function(done)
 		{
-			util.newFile(util.tempVisible, {hidden:true});
+			helpers.newFile(helpers.tempVisible, {hidden:true});
 			
-			hidefile.isHidden(util.tempVisible, function(error, result)
+			hidefile.isHidden(helpers.tempVisible, function(error, result)
 			{
-				util.removeFile(util.tempVisible);
+				helpers.removeFile(helpers.tempVisible);
 				expect(error).to.be.null;
 				expect(result).to.be.false;
 				done();
@@ -146,11 +139,11 @@ describe("isHidden()", function()
 		
 		it("should be false for attribute-only folders", function(done)
 		{
-			util.newFolder(util.tempVisible, {hidden:true});
+			helpers.newFolder(helpers.tempVisible, {hidden:true});
 			
-			hidefile.isHidden(util.tempVisible, function(error, result)
+			hidefile.isHidden(helpers.tempVisible, function(error, result)
 			{
-				util.removeFolder(util.tempVisible);
+				helpers.removeFolder(helpers.tempVisible);
 				expect(error).to.be.null;
 				expect(result).to.be.false;
 				done();
@@ -159,11 +152,11 @@ describe("isHidden()", function()
 		
 		it("should be true for prefixed-attributed files", function(done)
 		{
-			util.newFile(util.tempHidden, {hidden:true});
+			helpers.newFile(helpers.tempHidden, {hidden:true});
 			
-			hidefile.isHidden(util.tempHidden, function(error, result)
+			hidefile.isHidden(helpers.tempHidden, function(error, result)
 			{
-				util.removeFile(util.tempHidden);
+				helpers.removeFile(helpers.tempHidden);
 				expect(error).to.be.null;
 				expect(result).to.be.true;
 				done();
@@ -172,11 +165,11 @@ describe("isHidden()", function()
 		
 		it("should be true for prefixed-attributed folders", function(done)
 		{
-			util.newFolder(util.tempHidden, {hidden:true});
+			helpers.newFolder(helpers.tempHidden, {hidden:true});
 			
-			hidefile.isHidden(util.tempHidden, function(error, result)
+			hidefile.isHidden(helpers.tempHidden, function(error, result)
 			{
-				util.removeFolder(util.tempHidden);
+				helpers.removeFolder(helpers.tempHidden);
 				expect(error).to.be.null;
 				expect(result).to.be.true;
 				done();
@@ -214,7 +207,7 @@ describe("isHiddenSync()", function()
 		it("should be true for prefix-only files", function(done)
 		{
 			// No need to create file on Unix as it's all string-based
-			var result = hidefile.isHiddenSync(util.tempHidden);
+			const result = hidefile.isHiddenSync(helpers.tempHidden);
 			
 			expect(result).to.be.true;
 			done();
@@ -223,7 +216,7 @@ describe("isHiddenSync()", function()
 		it("should be true for prefix-only folders", function(done)
 		{
 			// No need to create file on Unix as it's all string-based
-			var result = hidefile.isHiddenSync(util.tempHidden);
+			const result = hidefile.isHiddenSync(helpers.tempHidden);
 			
 			expect(result).to.be.true;
 			done();
@@ -234,88 +227,88 @@ describe("isHiddenSync()", function()
 	{
 		it("should be false for unprefixed-unattributed files", function(done)
 		{
-			util.newFile(util.tempVisible);
+			helpers.newFile(helpers.tempVisible);
 			
-			var result = hidefile.isHiddenSync(util.tempVisible);
+			const result = hidefile.isHiddenSync(helpers.tempVisible);
 			
-			util.removeFile(util.tempVisible);
+			helpers.removeFile(helpers.tempVisible);
 			expect(result).to.be.false;
 			done();
 		});
 		
 		it("should be false for unprefixed-unattributed folders", function(done)
 		{
-			util.newFolder(util.tempVisible);
+			helpers.newFolder(helpers.tempVisible);
 			
-			var result = hidefile.isHiddenSync(util.tempVisible);
+			const result = hidefile.isHiddenSync(helpers.tempVisible);
 			
-			util.removeFolder(util.tempVisible);
+			helpers.removeFolder(helpers.tempVisible);
 			expect(result).to.be.false;
 			done();
 		});
 		
 		it("should be false for prefix-only files", function(done)
 		{
-			util.newFile(util.tempHidden);
+			helpers.newFile(helpers.tempHidden);
 			
-			var result = hidefile.isHiddenSync(util.tempHidden);
+			const result = hidefile.isHiddenSync(helpers.tempHidden);
 			
-			util.removeFile(util.tempHidden);
+			helpers.removeFile(helpers.tempHidden);
 			expect(result).to.be.false;
 			done();
 		});
 		
 		it("should be false for prefix-only folders", function(done)
 		{
-			util.newFolder(util.tempHidden);
+			helpers.newFolder(helpers.tempHidden);
 			
-			var result = hidefile.isHiddenSync(util.tempHidden);
+			const result = hidefile.isHiddenSync(helpers.tempHidden);
 			
-			util.removeFolder(util.tempHidden);
+			helpers.removeFolder(helpers.tempHidden);
 			expect(result).to.be.false;
 			done();
 		});
 		
 		it("should be false for attribute-only files", function(done)
 		{
-			util.newFile(util.tempVisible, {hidden:true});
+			helpers.newFile(helpers.tempVisible, {hidden:true});
 			
-			var result = hidefile.isHiddenSync(util.tempVisible);
+			const result = hidefile.isHiddenSync(helpers.tempVisible);
 			
-			util.removeFile(util.tempVisible);
+			helpers.removeFile(helpers.tempVisible);
 			expect(result).to.be.false;
 			done();
 		});
 		
 		it("should be false for attribute-only folders", function(done)
 		{
-			util.newFolder(util.tempVisible, {hidden:true});
+			helpers.newFolder(helpers.tempVisible, {hidden:true});
 			
-			var result = hidefile.isHiddenSync(util.tempVisible);
+			const result = hidefile.isHiddenSync(helpers.tempVisible);
 			
-			util.removeFolder(util.tempVisible);
+			helpers.removeFolder(helpers.tempVisible);
 			expect(result).to.be.false;
 			done();
 		});
 		
 		it("should be true for prefixed-attributed files", function(done)
 		{
-			util.newFile(util.tempHidden, {hidden:true});
+			helpers.newFile(helpers.tempHidden, {hidden:true});
 			
-			var result = hidefile.isHiddenSync(util.tempHidden);
+			const result = hidefile.isHiddenSync(helpers.tempHidden);
 			
-			util.removeFile(util.tempHidden);
+			helpers.removeFile(helpers.tempHidden);
 			expect(result).to.be.true;
 			done();
 		});
 		
 		it("should be true for prefixed-attributed folders", function(done)
 		{
-			util.newFolder(util.tempHidden, {hidden:true});
+			helpers.newFolder(helpers.tempHidden, {hidden:true});
 			
-			var result = hidefile.isHiddenSync(util.tempHidden);
+			const result = hidefile.isHiddenSync(helpers.tempHidden);
 			
-			util.removeFolder(util.tempHidden);
+			helpers.removeFolder(helpers.tempHidden);
 			expect(result).to.be.true;
 			done();
 		});
@@ -364,11 +357,11 @@ describe("shouldBeHidden()", function()
 {
 	it("should be false for unprefixed-unattributed files", function(done)
 	{
-		util.newFile(util.tempVisible);
+		helpers.newFile(helpers.tempVisible);
 		
-		hidefile.shouldBeHidden(util.tempVisible, function(error, result)
+		hidefile.shouldBeHidden(helpers.tempVisible, function(error, result)
 		{
-			util.removeFile(util.tempVisible);
+			helpers.removeFile(helpers.tempVisible);
 			expect(error).to.be.null;
 			expect(result).to.be.false;
 			done();
@@ -377,11 +370,11 @@ describe("shouldBeHidden()", function()
 	
 	it("should be false for unprefixed-unattributed folders", function(done)
 	{
-		util.newFolder(util.tempVisible);
+		helpers.newFolder(helpers.tempVisible);
 		
-		hidefile.shouldBeHidden(util.tempVisible, function(error, result)
+		hidefile.shouldBeHidden(helpers.tempVisible, function(error, result)
 		{
-			util.removeFolder(util.tempVisible);
+			helpers.removeFolder(helpers.tempVisible);
 			expect(error).to.be.null;
 			expect(result).to.be.false;
 			done();
@@ -390,11 +383,11 @@ describe("shouldBeHidden()", function()
 	
 	it("should be true for prefix-only files", function(done)
 	{
-		util.newFile(util.tempHidden);
+		helpers.newFile(helpers.tempHidden);
 		
-		hidefile.shouldBeHidden(util.tempHidden, function(error, result)
+		hidefile.shouldBeHidden(helpers.tempHidden, function(error, result)
 		{
-			util.removeFile(util.tempHidden);
+			helpers.removeFile(helpers.tempHidden);
 			expect(error).to.be.null;
 			expect(result).to.be.true;
 			done();
@@ -403,11 +396,11 @@ describe("shouldBeHidden()", function()
 	
 	it("should be true for prefix-only folders", function(done)
 	{
-		util.newFolder(util.tempHidden);
+		helpers.newFolder(helpers.tempHidden);
 		
-		hidefile.shouldBeHidden(util.tempHidden, function(error, result)
+		hidefile.shouldBeHidden(helpers.tempHidden, function(error, result)
 		{
-			util.removeFolder(util.tempHidden);
+			helpers.removeFolder(helpers.tempHidden);
 			expect(error).to.be.null;
 			expect(result).to.be.true;
 			done();
@@ -418,11 +411,11 @@ describe("shouldBeHidden()", function()
 	{
 		it("should be true for attribute-only files", function(done)
 		{
-			util.newFile(util.tempVisible, {hidden:true});
+			helpers.newFile(helpers.tempVisible, {hidden:true});
 			
-			hidefile.shouldBeHidden(util.tempVisible, function(error, result)
+			hidefile.shouldBeHidden(helpers.tempVisible, function(error, result)
 			{
-				util.removeFile(util.tempVisible);
+				helpers.removeFile(helpers.tempVisible);
 				expect(error).to.be.null;
 				expect(result).to.be.true;
 				done();
@@ -431,11 +424,11 @@ describe("shouldBeHidden()", function()
 		
 		it("should be true for attribute-only folders", function(done)
 		{
-			util.newFolder(util.tempVisible, {hidden:true});
+			helpers.newFolder(helpers.tempVisible, {hidden:true});
 			
-			hidefile.shouldBeHidden(util.tempVisible, function(error, result)
+			hidefile.shouldBeHidden(helpers.tempVisible, function(error, result)
 			{
-				util.removeFolder(util.tempVisible);
+				helpers.removeFolder(helpers.tempVisible);
 				expect(error).to.be.null;
 				expect(result).to.be.true;
 				done();
@@ -444,11 +437,11 @@ describe("shouldBeHidden()", function()
 		
 		it("should be true for prefixed-attributed files", function(done)
 		{
-			util.newFile(util.tempHidden, {hidden:true});
+			helpers.newFile(helpers.tempHidden, {hidden:true});
 			
-			hidefile.shouldBeHidden(util.tempHidden, function(error, result)
+			hidefile.shouldBeHidden(helpers.tempHidden, function(error, result)
 			{
-				util.removeFile(util.tempHidden);
+				helpers.removeFile(helpers.tempHidden);
 				expect(error).to.be.null;
 				expect(result).to.be.true;
 				done();
@@ -457,11 +450,11 @@ describe("shouldBeHidden()", function()
 		
 		it("should be true for prefixed-attributed folders", function(done)
 		{
-			util.newFolder(util.tempHidden, {hidden:true});
+			helpers.newFolder(helpers.tempHidden, {hidden:true});
 			
-			hidefile.shouldBeHidden(util.tempHidden, function(error, result)
+			hidefile.shouldBeHidden(helpers.tempHidden, function(error, result)
 			{
-				util.removeFolder(util.tempHidden);
+				helpers.removeFolder(helpers.tempHidden);
 				expect(error).to.be.null;
 				expect(result).to.be.true;
 				done();
@@ -496,44 +489,44 @@ describe("shouldBeHiddenSync()", function()
 {
 	it("should be false for unprefixed-unattributed files", function(done)
 	{
-		util.newFile(util.tempVisible);
+		helpers.newFile(helpers.tempVisible);
 		
-		var result = hidefile.shouldBeHiddenSync(util.tempVisible);
+		const result = hidefile.shouldBeHiddenSync(helpers.tempVisible);
 		
-		util.removeFile(util.tempVisible);
+		helpers.removeFile(helpers.tempVisible);
 		expect(result).to.be.false;
 		done();
 	});
 	
 	it("should be false for unprefixed-unattributed folders", function(done)
 	{
-		util.newFolder(util.tempVisible);
+		helpers.newFolder(helpers.tempVisible);
 		
-		var result = hidefile.shouldBeHiddenSync(util.tempVisible);
+		const result = hidefile.shouldBeHiddenSync(helpers.tempVisible);
 		
-		util.removeFolder(util.tempVisible);
+		helpers.removeFolder(helpers.tempVisible);
 		expect(result).to.be.false;
 		done();
 	});
 	
 	it("should be true for prefix-only files", function(done)
 	{
-		util.newFile(util.tempHidden);
+		helpers.newFile(helpers.tempHidden);
 		
-		var result = hidefile.shouldBeHiddenSync(util.tempHidden);
+		const result = hidefile.shouldBeHiddenSync(helpers.tempHidden);
 		
-		util.removeFile(util.tempHidden);
+		helpers.removeFile(helpers.tempHidden);
 		expect(result).to.be.true;
 		done();
 	});
 	
 	it("should be true for prefix-only folders", function(done)
 	{
-		util.newFolder(util.tempHidden);
+		helpers.newFolder(helpers.tempHidden);
 		
-		var result = hidefile.shouldBeHiddenSync(util.tempHidden);
+		const result = hidefile.shouldBeHiddenSync(helpers.tempHidden);
 		
-		util.removeFolder(util.tempHidden);
+		helpers.removeFolder(helpers.tempHidden);
 		expect(result).to.be.true;
 		done();
 	});
@@ -542,44 +535,44 @@ describe("shouldBeHiddenSync()", function()
 	{
 		it("should be true for attribute-only files", function(done)
 		{
-			util.newFile(util.tempVisible, {hidden:true});
+			helpers.newFile(helpers.tempVisible, {hidden:true});
 			
-			var result = hidefile.shouldBeHiddenSync(util.tempVisible);
+			const result = hidefile.shouldBeHiddenSync(helpers.tempVisible);
 			
-			util.removeFile(util.tempVisible);
+			helpers.removeFile(helpers.tempVisible);
 			expect(result).to.be.true;
 			done();
 		});
 		
 		it("should be true for attribute-only folders", function(done)
 		{
-			util.newFolder(util.tempVisible, {hidden:true});
+			helpers.newFolder(helpers.tempVisible, {hidden:true});
 			
-			var result = hidefile.shouldBeHiddenSync(util.tempVisible);
+			const result = hidefile.shouldBeHiddenSync(helpers.tempVisible);
 			
-			util.removeFolder(util.tempVisible);
+			helpers.removeFolder(helpers.tempVisible);
 			expect(result).to.be.true;
 			done();
 		});
 		
 		it("should be true for prefixed-attributed files", function(done)
 		{
-			util.newFile(util.tempHidden, {hidden:true});
+			helpers.newFile(helpers.tempHidden, {hidden:true});
 			
-			var result = hidefile.shouldBeHiddenSync(util.tempHidden);
+			const result = hidefile.shouldBeHiddenSync(helpers.tempHidden);
 			
-			util.removeFile(util.tempHidden);
+			helpers.removeFile(helpers.tempHidden);
 			expect(result).to.be.true;
 			done();
 		});
 		
 		it("should be true for prefixed-attributed folders", function(done)
 		{
-			util.newFolder(util.tempHidden, {hidden:true});
+			helpers.newFolder(helpers.tempHidden, {hidden:true});
 			
-			var result = hidefile.shouldBeHiddenSync(util.tempHidden);
+			const result = hidefile.shouldBeHiddenSync(helpers.tempHidden);
 			
-			util.removeFolder(util.tempHidden);
+			helpers.removeFolder(helpers.tempHidden);
 			expect(result).to.be.true;
 			done();
 		});
@@ -628,13 +621,13 @@ describe("hide()", function()
 {
 	it("should work on unprefixed-unattributed files", function(done)
 	{
-		util.newFile(util.tempVisible);
+		helpers.newFile(helpers.tempVisible);
 		
-		hidefile.hide(util.tempVisible, function(error, newpath)
+		hidefile.hide(helpers.tempVisible, function(error, newpath)
 		{
-			var result = hidefile.isHiddenSync(newpath);
+			const result = hidefile.isHiddenSync(newpath);
 			
-			util.removeFile(newpath);
+			helpers.removeFile(newpath);
 			expect(error).to.be.null;
 			expect(result).to.be.true;
 			done();
@@ -643,13 +636,13 @@ describe("hide()", function()
 	
 	it("should work on unprefixed-unattributed folders", function(done)
 	{
-		util.newFolder(util.tempVisible);
+		helpers.newFolder(helpers.tempVisible);
 		
-		hidefile.hide(util.tempVisible, function(error, newpath)
+		hidefile.hide(helpers.tempVisible, function(error, newpath)
 		{
-			var result = hidefile.isHiddenSync(newpath);
+			const result = hidefile.isHiddenSync(newpath);
 			
-			util.removeFolder(newpath);
+			helpers.removeFolder(newpath);
 			expect(error).to.be.null;
 			expect(result).to.be.true;
 			done();
@@ -658,13 +651,13 @@ describe("hide()", function()
 	
 	it("should work on prefix-only files", function(done)
 	{
-		util.newFile(util.tempHidden);
+		helpers.newFile(helpers.tempHidden);
 		
-		hidefile.hide(util.tempHidden, function(error, newpath)
+		hidefile.hide(helpers.tempHidden, function(error, newpath)
 		{
-			var result = hidefile.isHiddenSync(util.tempHidden);
+			const result = hidefile.isHiddenSync(helpers.tempHidden);
 			
-			util.removeFile(util.tempHidden);
+			helpers.removeFile(helpers.tempHidden);
 			expect(error).to.be.null;
 			expect(result).to.be.true;
 			done();
@@ -673,13 +666,13 @@ describe("hide()", function()
 	
 	it("should work on prefix-only folders", function(done)
 	{
-		util.newFolder(util.tempHidden);
+		helpers.newFolder(helpers.tempHidden);
 		
-		hidefile.hide(util.tempHidden, function(error, newpath)
+		hidefile.hide(helpers.tempHidden, function(error, newpath)
 		{
-			var result = hidefile.isHiddenSync(util.tempHidden);
+			const result = hidefile.isHiddenSync(helpers.tempHidden);
 			
-			util.removeFolder(util.tempHidden);
+			helpers.removeFolder(helpers.tempHidden);
 			expect(error).to.be.null;
 			expect(result).to.be.true;
 			done();
@@ -710,13 +703,13 @@ describe("hide()", function()
 	{
 		it("should work on attribute-only files", function(done)
 		{
-			util.newFile(util.tempVisible, {hidden:true});
+			helpers.newFile(helpers.tempVisible, {hidden:true});
 			
-			hidefile.hide(util.tempVisible, function(error, newpath)
+			hidefile.hide(helpers.tempVisible, function(error, newpath)
 			{
-				var result = hidefile.isHiddenSync(newpath);
+				const result = hidefile.isHiddenSync(newpath);
 				
-				util.removeFile(newpath);
+				helpers.removeFile(newpath);
 				expect(error).to.be.null;
 				expect(result).to.be.true;
 				done();
@@ -725,13 +718,13 @@ describe("hide()", function()
 		
 		it("should work on attribute-only folders", function(done)
 		{
-			util.newFolder(util.tempVisible, {hidden:true});
+			helpers.newFolder(helpers.tempVisible, {hidden:true});
 			
-			hidefile.hide(util.tempVisible, function(error, newpath)
+			hidefile.hide(helpers.tempVisible, function(error, newpath)
 			{
-				var result = hidefile.isHiddenSync(newpath);
+				const result = hidefile.isHiddenSync(newpath);
 				
-				util.removeFolder(newpath);
+				helpers.removeFolder(newpath);
 				expect(error).to.be.null;
 				expect(result).to.be.true;
 				done();
@@ -740,13 +733,13 @@ describe("hide()", function()
 		
 		it("should work on prefixed-attributed files", function(done)
 		{
-			util.newFile(util.tempHidden, {hidden:true});
+			helpers.newFile(helpers.tempHidden, {hidden:true});
 			
-			hidefile.hide(util.tempHidden, function(error, newpath)
+			hidefile.hide(helpers.tempHidden, function(error, newpath)
 			{
-				var result = hidefile.isHiddenSync(util.tempHidden);
+				const result = hidefile.isHiddenSync(helpers.tempHidden);
 				
-				util.removeFile(util.tempHidden);
+				helpers.removeFile(helpers.tempHidden);
 				expect(error).to.be.null;
 				expect(result).to.be.true;
 				done();
@@ -755,13 +748,13 @@ describe("hide()", function()
 		
 		it("should work on prefixed-attributed folders", function(done)
 		{
-			util.newFolder(util.tempHidden, {hidden:true});
+			helpers.newFolder(helpers.tempHidden, {hidden:true});
 			
-			hidefile.hide(util.tempHidden, function(error, newpath)
+			hidefile.hide(helpers.tempHidden, function(error, newpath)
 			{
-				var result = hidefile.isHiddenSync(util.tempHidden);
+				const result = hidefile.isHiddenSync(helpers.tempHidden);
 				
-				util.removeFolder(util.tempHidden);
+				helpers.removeFolder(helpers.tempHidden);
 				expect(error).to.be.null;
 				expect(result).to.be.true;
 				done();
@@ -776,48 +769,48 @@ describe("hideSync()", function()
 {
 	it("should work on unprefixed-unattributed files", function(done)
 	{
-		util.newFile(util.tempVisible);
+		helpers.newFile(helpers.tempVisible);
 		
-		var newpath = hidefile.hideSync(util.tempVisible);
-		var result = hidefile.isHiddenSync(newpath);
+		const newpath = hidefile.hideSync(helpers.tempVisible);
+		const result = hidefile.isHiddenSync(newpath);
 		
-		util.removeFile(newpath);
+		helpers.removeFile(newpath);
 		expect(result).to.be.true;
 		done();
 	});
 	
 	it("should work on unprefixed-unattributed folders", function(done)
 	{
-		util.newFolder(util.tempVisible);
+		helpers.newFolder(helpers.tempVisible);
 		
-		var newpath = hidefile.hideSync(util.tempVisible);
-		var result = hidefile.isHiddenSync(newpath);
+		const newpath = hidefile.hideSync(helpers.tempVisible);
+		const result = hidefile.isHiddenSync(newpath);
 		
-		util.removeFolder(newpath);
+		helpers.removeFolder(newpath);
 		expect(result).to.be.true;
 		done();
 	});
 	
 	it("should work on prefix-only files", function(done)
 	{
-		util.newFile(util.tempHidden);
+		helpers.newFile(helpers.tempHidden);
 		
-		var newpath = hidefile.hideSync(util.tempHidden);
-		var result = hidefile.isHiddenSync(util.tempHidden);
+		const newpath = hidefile.hideSync(helpers.tempHidden);
+		const result = hidefile.isHiddenSync(helpers.tempHidden);
 		
-		util.removeFile(util.tempHidden);
+		helpers.removeFile(helpers.tempHidden);
 		expect(result).to.be.true;
 		done();
 	});
 	
 	it("should work on prefix-only folders", function(done)
 	{
-		util.newFolder(util.tempHidden);
+		helpers.newFolder(helpers.tempHidden);
 		
-		var newpath = hidefile.hideSync(util.tempHidden);
-		var result = hidefile.isHiddenSync(util.tempHidden);
+		const newpath = hidefile.hideSync(helpers.tempHidden);
+		const result = hidefile.isHiddenSync(helpers.tempHidden);
 		
-		util.removeFolder(util.tempHidden);
+		helpers.removeFolder(helpers.tempHidden);
 		expect(result).to.be.true;
 		done();
 	});
@@ -862,48 +855,48 @@ describe("hideSync()", function()
 	{
 		it("should work on attribute-only files", function(done)
 		{
-			util.newFile(util.tempVisible, {hidden:true});
+			helpers.newFile(helpers.tempVisible, {hidden:true});
 			
-			var newpath = hidefile.hideSync(util.tempVisible);
-			var result = hidefile.isHiddenSync(newpath);
+			const newpath = hidefile.hideSync(helpers.tempVisible);
+			const result = hidefile.isHiddenSync(newpath);
 			
-			util.removeFile(newpath);
+			helpers.removeFile(newpath);
 			expect(result).to.be.true;
 			done();
 		});
 		
 		it("should work on attribute-only folders", function(done)
 		{
-			util.newFolder(util.tempVisible, {hidden:true});
+			helpers.newFolder(helpers.tempVisible, {hidden:true});
 			
-			var newpath = hidefile.hideSync(util.tempVisible);
-			var result = hidefile.isHiddenSync(newpath);
+			const newpath = hidefile.hideSync(helpers.tempVisible);
+			const result = hidefile.isHiddenSync(newpath);
 			
-			util.removeFolder(newpath);
+			helpers.removeFolder(newpath);
 			expect(result).to.be.true;
 			done();
 		});
 		
 		it("should work on prefixed-attributed files", function(done)
 		{
-			util.newFile(util.tempHidden, {hidden:true});
+			helpers.newFile(helpers.tempHidden, {hidden:true});
 			
-			var newpath = hidefile.hideSync(util.tempHidden);
-			var result = hidefile.isHiddenSync(util.tempHidden);
+			const newpath = hidefile.hideSync(helpers.tempHidden);
+			const result = hidefile.isHiddenSync(helpers.tempHidden);
 			
-			util.removeFile(util.tempHidden);
+			helpers.removeFile(helpers.tempHidden);
 			expect(result).to.be.true;
 			done();
 		});
 		
 		it("should work on prefixed-attributed folders", function(done)
 		{
-			util.newFolder(util.tempHidden, {hidden:true});
+			helpers.newFolder(helpers.tempHidden, {hidden:true});
 			
-			var newpath = hidefile.hideSync(util.tempHidden);
-			var result = hidefile.isHiddenSync(util.tempHidden);
+			const newpath = hidefile.hideSync(helpers.tempHidden);
+			const result = hidefile.isHiddenSync(helpers.tempHidden);
 			
-			util.removeFolder(util.tempHidden);
+			helpers.removeFolder(helpers.tempHidden);
 			expect(result).to.be.true;
 			done();
 		});
@@ -916,13 +909,13 @@ describe("reveal()", function()
 {
 	it("should work on unprefixed-unattributed files", function(done)
 	{
-		util.newFile(util.tempVisible);
+		helpers.newFile(helpers.tempVisible);
 		
-		hidefile.reveal(util.tempVisible, function(error, newpath)
+		hidefile.reveal(helpers.tempVisible, function(error, newpath)
 		{
-			var result = hidefile.isHiddenSync(util.tempVisible);
+			const result = hidefile.isHiddenSync(helpers.tempVisible);
 			
-			util.removeFile(util.tempVisible);
+			helpers.removeFile(helpers.tempVisible);
 			expect(error).to.be.null;
 			expect(result).to.be.false;
 			done();
@@ -931,13 +924,13 @@ describe("reveal()", function()
 	
 	it("should work on unprefixed-unattributed folders", function(done)
 	{
-		util.newFolder(util.tempVisible);
+		helpers.newFolder(helpers.tempVisible);
 		
-		hidefile.reveal(util.tempVisible, function(error, newpath)
+		hidefile.reveal(helpers.tempVisible, function(error, newpath)
 		{
-			var result = hidefile.isHiddenSync(util.tempVisible);
+			const result = hidefile.isHiddenSync(helpers.tempVisible);
 			
-			util.removeFolder(util.tempVisible);
+			helpers.removeFolder(helpers.tempVisible);
 			expect(error).to.be.null;
 			expect(result).to.be.false;
 			done();
@@ -946,13 +939,13 @@ describe("reveal()", function()
 	
 	it("should work on prefix-only files", function(done)
 	{
-		util.newFile(util.tempHidden);
+		helpers.newFile(helpers.tempHidden);
 		
-		hidefile.reveal(util.tempHidden, function(error, newpath)
+		hidefile.reveal(helpers.tempHidden, function(error, newpath)
 		{
-			var result = hidefile.isHiddenSync(newpath);
+			const result = hidefile.isHiddenSync(newpath);
 			
-			util.removeFile(newpath);
+			helpers.removeFile(newpath);
 			expect(error).to.be.null;
 			expect(result).to.be.false;
 			done();
@@ -961,13 +954,13 @@ describe("reveal()", function()
 	
 	it("should work on prefix-only folders", function(done)
 	{
-		util.newFolder(util.tempHidden);
+		helpers.newFolder(helpers.tempHidden);
 		
-		hidefile.reveal(util.tempHidden, function(error, newpath)
+		hidefile.reveal(helpers.tempHidden, function(error, newpath)
 		{
-			var result = hidefile.isHiddenSync(newpath);
+			const result = hidefile.isHiddenSync(newpath);
 			
-			util.removeFolder(newpath);
+			helpers.removeFolder(newpath);
 			expect(error).to.be.null;
 			expect(result).to.be.false;
 			done();
@@ -998,13 +991,13 @@ describe("reveal()", function()
 	{
 		it("should work on attribute-only files", function(done)
 		{
-			util.newFile(util.tempVisible, {hidden:true});
+			helpers.newFile(helpers.tempVisible, {hidden:true});
 			
-			hidefile.reveal(util.tempVisible, function(error, newpath)
+			hidefile.reveal(helpers.tempVisible, function(error, newpath)
 			{
-				var result = hidefile.isHiddenSync(util.tempVisible);
+				const result = hidefile.isHiddenSync(helpers.tempVisible);
 				
-				util.removeFile(util.tempVisible);
+				helpers.removeFile(helpers.tempVisible);
 				expect(error).to.be.null;
 				expect(result).to.be.false;
 				done();
@@ -1013,13 +1006,13 @@ describe("reveal()", function()
 		
 		it("should work on attribute-only folders", function(done)
 		{
-			util.newFolder(util.tempVisible, {hidden:true});
+			helpers.newFolder(helpers.tempVisible, {hidden:true});
 			
-			hidefile.reveal(util.tempVisible, function(error, newpath)
+			hidefile.reveal(helpers.tempVisible, function(error, newpath)
 			{
-				var result = hidefile.isHiddenSync(util.tempVisible);
+				const result = hidefile.isHiddenSync(helpers.tempVisible);
 				
-				util.removeFolder(util.tempVisible);
+				helpers.removeFolder(helpers.tempVisible);
 				expect(error).to.be.null;
 				expect(result).to.be.false;
 				done();
@@ -1028,13 +1021,13 @@ describe("reveal()", function()
 		
 		it("should work on prefixed-attributed files", function(done)
 		{
-			util.newFile(util.tempHidden, {hidden:true});
+			helpers.newFile(helpers.tempHidden, {hidden:true});
 			
-			hidefile.reveal(util.tempHidden, function(error, newpath)
+			hidefile.reveal(helpers.tempHidden, function(error, newpath)
 			{
-				var result = hidefile.isHiddenSync(newpath);
+				const result = hidefile.isHiddenSync(newpath);
 				
-				util.removeFile(newpath);
+				helpers.removeFile(newpath);
 				expect(error).to.be.null;
 				expect(result).to.be.false;
 				done();
@@ -1043,13 +1036,13 @@ describe("reveal()", function()
 		
 		it("should work on prefixed-attributed folders", function(done)
 		{
-			util.newFolder(util.tempHidden, {hidden:true});
+			helpers.newFolder(helpers.tempHidden, {hidden:true});
 			
-			hidefile.reveal(util.tempHidden, function(error, newpath)
+			hidefile.reveal(helpers.tempHidden, function(error, newpath)
 			{
-				var result = hidefile.isHiddenSync(newpath);
+				const result = hidefile.isHiddenSync(newpath);
 				
-				util.removeFolder(newpath);
+				helpers.removeFolder(newpath);
 				expect(error).to.be.null;
 				expect(result).to.be.false;
 				done();
@@ -1064,48 +1057,48 @@ describe("revealSync()", function()
 {
 	it("should work on unprefixed-unattributed files", function(done)
 	{
-		util.newFile(util.tempVisible);
+		helpers.newFile(helpers.tempVisible);
 		
-		var newpath = hidefile.revealSync(util.tempVisible);
-		var result = hidefile.isHiddenSync(util.tempVisible);
+		const newpath = hidefile.revealSync(helpers.tempVisible);
+		const result = hidefile.isHiddenSync(helpers.tempVisible);
 		
-		util.removeFile(util.tempVisible);
+		helpers.removeFile(helpers.tempVisible);
 		expect(result).to.be.false;
 		done();
 	});
 	
 	it("should work on unprefixed-unattributed folders", function(done)
 	{
-		util.newFolder(util.tempVisible);
+		helpers.newFolder(helpers.tempVisible);
 		
-		var newpath = hidefile.revealSync(util.tempVisible);
-		var result = hidefile.isHiddenSync(util.tempVisible);
+		const newpath = hidefile.revealSync(helpers.tempVisible);
+		const result = hidefile.isHiddenSync(helpers.tempVisible);
 		
-		util.removeFolder(util.tempVisible);
+		helpers.removeFolder(helpers.tempVisible);
 		expect(result).to.be.false;
 		done();
 	});
 	
 	it("should work on prefix-only files", function(done)
 	{
-		util.newFile(util.tempHidden);
+		helpers.newFile(helpers.tempHidden);
 		
-		var newpath = hidefile.revealSync(util.tempHidden);
-		var result = hidefile.isHiddenSync(newpath);
+		const newpath = hidefile.revealSync(helpers.tempHidden);
+		const result = hidefile.isHiddenSync(newpath);
 		
-		util.removeFile(newpath);
+		helpers.removeFile(newpath);
 		expect(result).to.be.false;
 		done();
 	});
 	
 	it("should work on prefix-only folders", function(done)
 	{
-		util.newFolder(util.tempHidden);
+		helpers.newFolder(helpers.tempHidden);
 		
-		var newpath = hidefile.revealSync(util.tempHidden);
-		var result = hidefile.isHiddenSync(newpath);
+		const newpath = hidefile.revealSync(helpers.tempHidden);
+		const result = hidefile.isHiddenSync(newpath);
 		
-		util.removeFolder(newpath);
+		helpers.removeFolder(newpath);
 		expect(result).to.be.false;
 		done();
 	});
@@ -1150,54 +1143,50 @@ describe("revealSync()", function()
 	{
 		it("should work on attribute-only files", function(done)
 		{
-			util.newFile(util.tempVisible, {hidden:true});
+			helpers.newFile(helpers.tempVisible, {hidden:true});
 			
-			var newpath = hidefile.revealSync(util.tempVisible);
-			var result = hidefile.isHiddenSync(util.tempVisible);
+			const newpath = hidefile.revealSync(helpers.tempVisible);
+			const result = hidefile.isHiddenSync(helpers.tempVisible);
 			
-			util.removeFile(util.tempVisible);
+			helpers.removeFile(helpers.tempVisible);
 			expect(result).to.be.false;
 			done();
 		});
 		
 		it("should work on attribute-only folders", function(done)
 		{
-			util.newFolder(util.tempVisible, {hidden:true});
+			helpers.newFolder(helpers.tempVisible, {hidden:true});
 			
-			var newpath = hidefile.revealSync(util.tempVisible);
-			var result = hidefile.isHiddenSync(util.tempVisible);
+			const newpath = hidefile.revealSync(helpers.tempVisible);
+			const result = hidefile.isHiddenSync(helpers.tempVisible);
 			
-			util.removeFolder(util.tempVisible);
+			helpers.removeFolder(helpers.tempVisible);
 			expect(result).to.be.false;
 			done();
 		});
 		
 		it("should work on prefixed-attributed files", function(done)
 		{
-			util.newFile(util.tempHidden, {hidden:true});
+			helpers.newFile(helpers.tempHidden, {hidden:true});
 			
-			var newpath = hidefile.revealSync(util.tempHidden);
-			var result = hidefile.isHiddenSync(newpath);
+			const newpath = hidefile.revealSync(helpers.tempHidden);
+			const result = hidefile.isHiddenSync(newpath);
 			
-			util.removeFile(newpath);
+			helpers.removeFile(newpath);
 			expect(result).to.be.false;
 			done();
 		});
 		
 		it("should work on prefixed-attributed folders", function(done)
 		{
-			util.newFolder(util.tempHidden, {hidden:true});
+			helpers.newFolder(helpers.tempHidden, {hidden:true});
 			
-			var newpath = hidefile.revealSync(util.tempHidden);
-			var result = hidefile.isHiddenSync(newpath);
+			const newpath = hidefile.revealSync(helpers.tempHidden);
+			const result = hidefile.isHiddenSync(newpath);
 			
-			util.removeFolder(newpath);
+			helpers.removeFolder(newpath);
 			expect(result).to.be.false;
 			done();
 		});
 	});
-});
-
-
-
 });

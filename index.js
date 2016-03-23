@@ -1,10 +1,10 @@
 "use strict";
-var fs = require("fs");
-var pathlib = require("path");
-var winattr = require("winattr");
+const fs = require("fs");
+const pathlib = require("path");
+const winattr = require("winattr");
 
-var prefix = ".";
-var windows = process.platform.indexOf("win") === 0;
+const prefix = ".";
+const windows = process.platform.indexOf("win") === 0;
 
 
 
@@ -78,7 +78,7 @@ function changeSync(before, after, attrs)
 
 function parsePath(path)
 {
-	var basename = pathlib.basename(path);
+	const basename = pathlib.basename(path);
 	var dirname  = pathlib.dirname(path);
 	
 	// Omit current dir marker
@@ -95,7 +95,7 @@ function parsePath(path)
 
 function stat(path, callback)
 {
-	var result =
+	const result =
 	{
 		unix: parsePath(path).prefixed,
 		windows: false
@@ -120,7 +120,7 @@ function stat(path, callback)
 
 function statSync(path)
 {
-	var result =
+	const result =
 	{
 		unix: parsePath(path).prefixed,
 		windows: false
@@ -180,8 +180,7 @@ function stringifyPath(pathObj, shouldHavePrefix)
 
 function hide(path, callback)
 {
-	var newpath = parsePath(path);
-	newpath = stringifyPath(newpath, true);
+	const newpath = stringifyPath( parsePath(path), true );
 	
 	change(path, newpath, {hidden:true}, callback);
 }
@@ -190,8 +189,7 @@ function hide(path, callback)
 
 function hideSync(path)
 {
-	var newpath = parsePath(path);
-	newpath = stringifyPath(newpath, true);
+	const newpath = stringifyPath( parsePath(path), true );
 	
 	return changeSync(path, newpath, {hidden:true});
 }
@@ -224,7 +222,7 @@ function isHidden(path, callback)
 
 function isHiddenSync(path, callback)
 {
-	var data = statSync(path);
+	const data = statSync(path);
 	
 	return data.unix===true && ((data.windows===true && windows===true) || windows===false);
 }
@@ -233,8 +231,7 @@ function isHiddenSync(path, callback)
 
 function reveal(path, callback)
 {
-	var newpath = parsePath(path);
-	newpath = stringifyPath(newpath, false);
+	const newpath = stringifyPath( parsePath(path), false );
 	
 	change(path, newpath, {hidden:false}, callback);
 }
@@ -243,8 +240,7 @@ function reveal(path, callback)
 
 function revealSync(path, callback)
 {
-	var newpath = parsePath(path);
-	newpath = stringifyPath(newpath, false);
+	const newpath = stringifyPath( parsePath(path), false );
 	
 	return changeSync(path, newpath, {hidden:false});
 }
@@ -270,7 +266,7 @@ function shouldBeHidden(path, callback)
 
 function shouldBeHiddenSync(path, callback)
 {
-	var data = statSync(path);
+	const data = statSync(path);
 	
 	return data.unix===true || data.windows===true;
 }

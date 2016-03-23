@@ -1,32 +1,32 @@
-# Test against these versions of Node.js.
+# Test against these versions of Node.js
 environment:
   matrix:
-    - nodejs_version: "0.10"
-    - nodejs_version: "0.12"
-    - nodejs_version: "4"
+    - nodejs_version: 4
+    - nodejs_version: 6
+    - nodejs_version: 8
 
 platform:
   - x86
   - x64
 
-# Install scripts. (runs after repo cloning)
+# Install scripts (runs after repo cloning)
 install:
-  # Get the latest stable version of Node.js or io.js
+  # Get the latest stable version of Node.js
   - ps: Install-Product node $env:nodejs_version $env:platform
-  # install modules
+  # Install modules
   - npm install
 
-# Post-install test scripts.
+# Post-install test scripts
 test_script:
-  # Output useful info for debugging.
+  # Output useful info for debugging
   - node --version
   - npm --version
-  # run tests
-  - ps: "npm test # PowerShell" # Pass comment to PS for easier debugging
+  # Run tests
+  - ps: "npm test --loglevel=error # PowerShell" # Hide warnings to avoid exceptions; Pass comment for easier debugging
   - cmd: npm test
 
-# Don't actually build.
+# Don't actually build
 build: off
 
-# Set build version format here instead of in the admin panel.
+# Set build version format here instead of in the admin panel
 version: "{build}"

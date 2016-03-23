@@ -1,8 +1,8 @@
 "use strict";
-var fs = require("fs");
-var winattr = require("winattr");
+const fs = require("fs");
+const winattr = require("winattr");
 
-var isWindows = process.platform.indexOf("win") === 0;
+const isWindows = process.platform.indexOf("win") === 0;
 
 
 
