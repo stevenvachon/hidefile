@@ -2,47 +2,46 @@
 const fs = require("fs");
 const winattr = require("winattr");
 
-const isWindows = process.platform.indexOf("win") === 0;
+const isWindows = process.platform.startsWith("win");
 
 
 
-function newFile(path, attrs)
+const newFile = (path, attrs) =>
 {
 	fs.writeFileSync(path, "");
 	setAttrs(path, attrs);
-}
+};
 
 
 
-function newFolder(path, attrs)
+const newFolder = (path, attrs) =>
 {
 	fs.mkdirSync(path);
 	setAttrs(path, attrs);
-}
+};
 
 
 
-function setAttrs(path, attrs)
+const setAttrs = (path, attrs) =>
 {
-	if (isWindows === true)
+	if (isWindows)
 	{
 		if (attrs!=null && typeof attrs==="object")
 		{
 			winattr.setSync(path, attrs);
 		}
 	}
-}
+};
 
 
 
 module.exports =
 {
-	newFile: newFile,
-	newFolder: newFolder,
+	isWindows,
+	newFile,
+	newFolder,
 	removeFile: fs.unlinkSync,
 	removeFolder: fs.rmdirSync,
-	
-	isWindows: isWindows,
-	tempHidden: ".temp",
-	tempVisible: "temp"
+	TEMP_HIDDEN: ".temp",
+	TEMP_VISIBLE: "temp"
 };

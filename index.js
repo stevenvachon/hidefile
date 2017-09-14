@@ -3,20 +3,20 @@ const fs = require("fs");
 const pathlib = require("path");
 const winattr = require("winattr");
 
+const isWindows = process.platform.startsWith("win");
 const prefix = ".";
-const windows = process.platform.indexOf("win") === 0;
 
 
 
-function change(before, after, attrs, callback)
+const change = (before, after, attrs, callback) =>
 {
 	//if (before !== after)
 	//{
-		fs.rename(before, after, function(error)
+		fs.rename(before, after, error =>
 		{
-			if (error==null && windows===true)
+			if (error==null && isWindows)
 			{
-				winattr.set(after, attrs, function(error)
+				winattr.set(after, attrs, error =>
 				{
 					change_callback(error, after, callback);
 				});
@@ -27,9 +27,9 @@ function change(before, after, attrs, callback)
 			}
 		});
 	/*}
-	else if (windows === true)
+	else if (isWindows)
 	{
-		winattr.set(after, attrs, function(error)
+		winattr.set(after, attrs, error =>
 		{
 			change_callback(error, after, callback);
 		});
@@ -39,11 +39,11 @@ function change(before, after, attrs, callback)
 		// Will not produce error if file does not exist and did not attempt to rename
 		callback(null, after);
 	}*/
-}
+};
 
 
 
-function change_callback(error, after, callback)
+const change_callback = (error, after, callback) =>
 {
 	if (error == null)
 	{
@@ -54,59 +54,59 @@ function change_callback(error, after, callback)
 		// Avoids arguments being [error,undefined].length===2
 		callback(error);
 	}
-}
+};
 
 
 
-function changeSync(before, after, attrs)
+const changeSync = (before, after, attrs) =>
 {
 	//if (before !== after)
 	//{
 		fs.renameSync(before, after);
 	//}
 	// Else: will not produce error if file does not exist and did not attempt to rename
-	
-	if (windows === true)
+
+	if (isWindows)
 	{
 		winattr.setSync(after, attrs);
 	}
-	
+
 	return after;
-}
+};
 
 
 
-function parsePath(path)
+const parsePath = path =>
 {
 	const basename = pathlib.basename(path);
-	var dirname  = pathlib.dirname(path);
-	
+	let dirname  = pathlib.dirname(path);
+
 	// Omit current dir marker
 	if (dirname === ".") dirname = "";
-	
+
 	return {
 		basename: basename,
 		dirname: dirname,
 		prefixed: basename[0] === prefix
 	};
-}
+};
 
 
 
-function stat(path, callback)
+const stat = (path, callback) =>
 {
 	const result =
 	{
 		unix: parsePath(path).prefixed,
 		windows: false
 	};
-	
-	if (windows === true)
+
+	if (isWindows)
 	{
-		winattr.get(path, function(error, data)
+		winattr.get(path, (error, data) =>
 		{
 			result.windows = (error!=null) ? false : data.hidden;
-			
+
 			callback(error, result);
 		});
 	}
@@ -114,39 +114,39 @@ function stat(path, callback)
 	{
 		callback(null, result);
 	}
-}
+};
 
 
 
-function statSync(path)
+const statSync = path =>
 {
 	const result =
 	{
 		unix: parsePath(path).prefixed,
 		windows: false
 	};
-	
-	if (windows === true)
+
+	if (isWindows)
 	{
 		result.windows = winattr.getSync(path).hidden;
 	}
-	
+
 	return result;
-}
+};
 
 
 
-function stringifyPath(pathObj, shouldHavePrefix)
+const stringifyPath = (pathObj, shouldHavePrefix) =>
 {
-	var result = "";
-	
+	let result = "";
+
 	if (pathObj.basename !== "")
 	{
-		if (shouldHavePrefix===true && pathObj.prefixed===false)
+		if (shouldHavePrefix && !pathObj.prefixed)
 		{
 			result = prefix + pathObj.basename;
 		}
-		else if (shouldHavePrefix===false && pathObj.prefixed===true)
+		else if (!shouldHavePrefix && pathObj.prefixed)
 		{
 			result = pathObj.basename.slice(1);
 		}
@@ -155,7 +155,7 @@ function stringifyPath(pathObj, shouldHavePrefix)
 			result = pathObj.basename;
 		}
 	}
-	
+
 	if (pathObj.dirname !== "")
 	{
 		// If has a basename, and dirname is not "/" nor has a trailing slash (unlikely)
@@ -168,9 +168,9 @@ function stringifyPath(pathObj, shouldHavePrefix)
 			result = pathObj.dirname + result;
 		}
 	}
-	
+
 	return result;
-}
+};
 
 
 
@@ -178,110 +178,110 @@ function stringifyPath(pathObj, shouldHavePrefix)
 
 
 
-function hide(path, callback)
+const hide = (path, callback) =>
 {
 	const newpath = stringifyPath( parsePath(path), true );
-	
+
 	change(path, newpath, {hidden:true}, callback);
-}
+};
 
 
 
-function hideSync(path)
+const hideSync = path =>
 {
 	const newpath = stringifyPath( parsePath(path), true );
-	
+
 	return changeSync(path, newpath, {hidden:true});
-}
+};
 
 
 
-function isDotPrefixed(path)
+const isDotPrefixed = path =>
 {
 	return pathlib.basename(path)[0] === prefix;
-}
+};
 
 
 
-function isHidden(path, callback)
+const isHidden = (path, callback) =>
 {
-	stat(path, function(error, data)
+	stat(path, (error, data) =>
 	{
 		if (error == null)
 		{
-			callback( null, data.unix===true && ((data.windows===true && windows===true) || windows===false) );
+			callback( null, data.unix && ((data.windows && isWindows) || !isWindows) );
 		}
 		else
 		{
 			callback(error);
 		}
 	});
-}
+};
 
 
 
-function isHiddenSync(path, callback)
+const isHiddenSync = (path, callback) =>
 {
 	const data = statSync(path);
-	
-	return data.unix===true && ((data.windows===true && windows===true) || windows===false);
-}
+
+	return data.unix && ((data.windows && isWindows) || !isWindows);
+};
 
 
 
-function reveal(path, callback)
+const reveal = (path, callback) =>
 {
 	const newpath = stringifyPath( parsePath(path), false );
-	
+
 	change(path, newpath, {hidden:false}, callback);
-}
+};
 
 
 
-function revealSync(path, callback)
+const revealSync = (path, callback) =>
 {
 	const newpath = stringifyPath( parsePath(path), false );
-	
+
 	return changeSync(path, newpath, {hidden:false});
-}
+};
 
 
 
-function shouldBeHidden(path, callback)
+const shouldBeHidden = (path, callback) =>
 {
-	stat(path, function(error, data)
+	stat(path, (error, data) =>
 	{
 		if (error == null)
 		{
-			callback( null, data.unix===true || data.windows===true );
+			callback( null, data.unix || data.windows );
 		}
 		else
 		{
 			callback(error);
 		}
 	});
-}
+};
 
 
 
-function shouldBeHiddenSync(path, callback)
+const shouldBeHiddenSync = (path, callback) =>
 {
 	const data = statSync(path);
-	
-	return data.unix===true || data.windows===true;
-}
+
+	return data.unix || data.windows;
+};
 
 
 
 module.exports =
 {
-	hide: hide,
-	hideSync: hideSync,
-	isDotPrefixed: isDotPrefixed,
-	isHidden: isHidden,
-	isHiddenSync: isHiddenSync,
-	reveal: reveal,
-	revealSync: revealSync,
-	shouldBeHidden: shouldBeHidden,
-	shouldBeHiddenSync: shouldBeHiddenSync
+	hide,
+	hideSync,
+	isDotPrefixed,
+	isHidden,
+	isHiddenSync,
+	reveal,
+	revealSync,
+	shouldBeHidden,
+	shouldBeHiddenSync
 };

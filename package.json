@@ -1,26 +1,29 @@
 {
   "name": "hidefile",
   "description": "Hide files and directories on all platforms.",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "license": "MIT",
-  "author": "Steven Vachon <contact@svachon.com> (https://www.svachon.com/)",
-  "repository": "stevenvachon/hidefile",
+  "author": "Steven Vachon <contact@svachon.com> (https://svachon.com)",
+  "repository": "github:stevenvachon/hidefile",
   "dependencies": {
-    "winattr": "^2.0.0"
+    "winattr": "^3.0.0"
   },
   "devDependencies": {
-    "chai": "^4.0.0",
-    "mocha": "^3.4.2"
+    "chai": "^4.2.0",
+    "coveralls": "^3.0.3",
+    "mocha": "^6.1.4",
+    "nyc": "^14.0.0"
   },
   "engines": {
-    "node": ">= 4"
+    "node": ">= 8"
   },
   "scripts": {
-    "test": "mocha test/ --bail --reporter spec --check-leaks"
+    "ci": "npm run test && nyc report --reporter=text-lcov | coveralls",
+    "posttest": "nyc report --reporter=text-summary --reporter=html",
+    "test": "nyc --silent mocha test/ --bail --check-leaks"
   },
   "files": [
-    "index.js",
-    "license"
+    "index.js"
   ],
   "keywords": [
     "directory",

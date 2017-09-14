@@ -1,9 +1,10 @@
 # Test against these versions of Node.js
 environment:
   matrix:
-    - nodejs_version: 4
-    - nodejs_version: 6
     - nodejs_version: 8
+    - nodejs_version: 10
+    - nodejs_version: 12
+    - nodejs_version: '' # latest version
 
 platform:
   - x86
@@ -22,8 +23,8 @@ test_script:
   - node --version
   - npm --version
   # Run tests
-  - ps: "npm test --loglevel=error # PowerShell" # Hide warnings to avoid exceptions; Pass comment for easier debugging
-  - cmd: npm test
+  - ps: "npm run ci --loglevel=error # PowerShell" # Hide warnings to avoid exceptions; Pass comment for easier debugging
+  - cmd: npm run ci
 
 # Don't actually build
 build: off

@@ -1,4 +1,4 @@
-# hidefile [![NPM Version][npm-image]][npm-url] [![Linux Build][travis-image]][travis-url] [![Windows Build][appveyor-image]][appveyor-url] [![Dependency Status][david-image]][david-url]
+# hidefile [![NPM Version][npm-image]][npm-url] [![Linux Build][travis-image]][travis-url] [![Windows Build][appveyor-image]][appveyor-url] [![Coverage Status][coveralls-image]][coveralls-url] [![Dependency Monitor][greenkeeper-image]][greenkeeper-url]
 
 > Hide files and directories on all platforms.
 
@@ -14,7 +14,7 @@ A native binding is used, offering great performance. As a contingency in case t
 
 ## Installation
 
-[Node.js](http://nodejs.org/) `>= 4` is required. To install, type this at the command line:
+[Node.js](http://nodejs.org/) `>= 8` is required. To install, type this at the command line:
 ```
 npm install hidefile
 ```
@@ -26,8 +26,10 @@ npm install hidefile
 `path` - Path to file or directory  
 `callback(err,newpath)` - A callback which is called upon completion  
 ```js
-hidefile.hide("path/to/file.ext", function(err, newpath) {
-    if (err == null) console.log(newpath);  //-> "path/to/.file.ext"
+hidefile.hide('path/to/file.ext', (err, newpath) => {
+  if (err == null) {
+    console.log(newpath);  //-> 'path/to/.file.ext'
+  }
 });
 ```
 
@@ -36,24 +38,26 @@ hidefile.hide("path/to/file.ext", function(err, newpath) {
 
 Throws an error if the file or dir cannot be found/accessed.
 ```js
-var newpath = hidefile.hideSync("path/to/file.ext");
+const newpath = hidefile.hideSync('path/to/file.ext');
 
-console.log(newpath);  //-> "path/to/.file.ext"
+console.log(newpath);  //-> 'path/to/.file.ext'
 ```
 
 ### `isDotPrefixed(path)`
 `path` - Path to file or directory  
 ```js
-console.log( hidefile.isDotPrefixed("path/to/.file.ext") );  //-> true
-console.log( hidefile.isDotPrefixed("path/to/file.ext") );   //-> false
+console.log( hidefile.isDotPrefixed('path/to/.file.ext') );  //-> true
+console.log( hidefile.isDotPrefixed('path/to/file.ext') );   //-> false
 ```
 
 ### `isHidden(path, callback)`
 `path` - Path to file or directory  
 `callback(result)` - A callback which is called upon completion  
 ```js
-hidefile.isHidden("path/to/file.ext", function(err, result) {
-    if (err == null) console.log(result);  //-> false
+hidefile.isHidden('path/to/file.ext', (err, result) => {
+  if (err == null) {
+    console.log(result);  //-> false
+  }
 });
 ```
 Unix: `result` is `true` if prefixed.  
@@ -64,7 +68,7 @@ Windows: `result` is `true` if prefixed *and* has "hidden" attribute, `false` if
 
 Throws an error if the file or dir cannot be found/accessed.
 ```js
-var result = hidefile.isHiddenSync("path/to/file.ext");
+const result = hidefile.isHiddenSync('path/to/file.ext');
 
 console.log(result);  //-> false
 ```
@@ -73,8 +77,10 @@ console.log(result);  //-> false
 `path` - Path to file or directory  
 `callback(err,newpath)` - A callback which is called upon completion  
 ```js
-hidefile.reveal("path/to/.file.ext", function(err, newpath) {
-    if (err == null) console.log(newpath);  //-> "path/to/file.ext"
+hidefile.reveal('path/to/.file.ext', (err, newpath) => {
+  if (err == null) {
+    console.log(newpath);  //-> 'path/to/file.ext'
+  }
 });
 ```
 
@@ -83,9 +89,9 @@ hidefile.reveal("path/to/.file.ext", function(err, newpath) {
 
 Throws an error if the file or dir cannot be found/accessed.
 ```js
-var newpath = hidefile.revealSync("path/to/.file.ext");
+const newpath = hidefile.revealSync('path/to/.file.ext');
 
-console.log(newpath);  //-> "path/to/file.ext"
+console.log(newpath);  //-> 'path/to/file.ext'
 ```
 
 ### `shouldBeHidden(path, callback)`
@@ -93,9 +99,11 @@ console.log(newpath);  //-> "path/to/file.ext"
 `callback(result)` - A callback which is called upon completion  
 ```js
 if (isWindows) {
-    hidefile.shouldBeHidden("path/to/.file.ext", function(err, result) {
-        if (err == null) console.log(result);  //-> true
-    });
+  hidefile.shouldBeHidden('path/to/.file.ext', (err, result) => {
+    if (err == null) {
+      console.log(result);  //-> true
+    }
+  });
 }
 ```
 Unix: `result` is `true` if prefixed.  
@@ -107,31 +115,20 @@ Windows: `result` is `true` if prefixed *or* has "hidden" attribute.
 Throws an error if the file or dir cannot be found/accessed.
 ```js
 if (isWindows) {
-    result = hidefile.shouldBeHiddenSync("path/to/.file.ext");
-    
-    console.log(result);  //-> true
+  result = hidefile.shouldBeHiddenSync('path/to/.file.ext');
+
+  console.log(result);  //-> true
 }
 ```
 
 
-## Changelog
-* 2.0.0 removed support for Node.js v0.10 and v0.12
-* 1.1.0 added binding support to Node.js v4
-* 1.0.0
-  * added `hideSync()`,`isHiddenSync()`,`revealSync()`,`shouldBeHiddenSync()`
-  * removed `useExec()`,`useNative()`
-  * uses binding by default, with auto-fallback to shell
-* 0.2.0 added `useExec()`,`useNative()`
-* 0.1.2 tested on Windows
-* 0.1.1 package.json optimization
-* 0.1.0 initial release
-
-
 [npm-image]: https://img.shields.io/npm/v/hidefile.svg
-[npm-url]: https://npmjs.org/package/hidefile
+[npm-url]: https://npmjs.com/package/hidefile
 [travis-image]: https://img.shields.io/travis/stevenvachon/hidefile.svg?label=linux
 [travis-url]: https://travis-ci.org/stevenvachon/hidefile
 [appveyor-image]: https://img.shields.io/appveyor/ci/stevenvachon/hidefile.svg?label=windows
 [appveyor-url]: https://ci.appveyor.com/project/stevenvachon/hidefile
-[david-image]: https://img.shields.io/david/stevenvachon/hidefile.svg
-[david-url]: https://david-dm.org/stevenvachon/hidefile
+[coveralls-image]: https://img.shields.io/coveralls/stevenvachon/hidefile.svg
+[coveralls-url]: https://coveralls.io/github/stevenvachon/hidefile
+[greenkeeper-image]: https://badges.greenkeeper.io/stevenvachon/hidefile.svg
+[greenkeeper-url]: https://greenkeeper.io/
