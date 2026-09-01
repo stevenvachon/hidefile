@@ -1,28 +1,38 @@
 {
   "name": "hidefile",
   "description": "Hide files and directories on all platforms.",
-  "version": "3.0.0",
+  "version": "4.0.0",
   "license": "MIT",
   "author": "Steven Vachon <contact@svachon.com> (https://svachon.com)",
   "repository": "github:stevenvachon/hidefile",
+  "type": "module",
   "dependencies": {
-    "winattr": "^3.0.0"
+    "is-windows": "^1.0.2",
+    "winattr": "^4.0.0"
   },
   "devDependencies": {
-    "chai": "^4.2.0",
-    "coveralls": "^3.0.3",
-    "mocha": "^6.1.4",
-    "nyc": "^14.0.0"
+    "@types/is-windows": "^1.0.2",
+    "@types/node": "^26.2.0",
+    "@vitest/coverage-v8": "^4.1.10",
+    "cspell": "^10.0.1",
+    "prettier": "^3.9.6",
+    "typescript": "^7.0.2",
+    "vitest": "^4.1.10"
   },
   "engines": {
-    "node": ">= 8"
+    "node": ">= 24"
   },
   "scripts": {
-    "ci": "npm run test && nyc report --reporter=text-lcov | coveralls",
-    "posttest": "nyc report --reporter=text-summary --reporter=html",
-    "test": "nyc --silent mocha test/ --bail --check-leaks"
+    "build": "npm run build:spellcheck && npm run build:lint && npm run build:compile",
+    "build:compile": "tsc",
+    "build:lint": "prettier --check '*.{js,json,md}' 'test/*.js'",
+    "build:spellcheck": "cspell '*.{js,json,md}' 'test/*.js' --no-progress",
+    "prepublishOnly": "npm run build && npm test",
+    "test": "npm run test:watch -- --reporter=verbose --run",
+    "test:watch": "vitest dev --coverage --coverage.include=index.js --coverage.reporter=html --coverage.reporter=lcov --coverage.reporter=text"
   },
   "files": [
+    "index.d.ts",
     "index.js"
   ],
   "keywords": [

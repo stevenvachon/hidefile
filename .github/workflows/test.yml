@@ -1,0 +1,65 @@
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  Test:
+    name: Node ${{ matrix.node }} (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, ubuntu-latest, windows-latest]
+        node: [24, 'lts/*', latest]
+        include:
+          - node: latest
+            os: macos-latest
+            experimental: true
+          - node: latest
+            os: ubuntu-latest
+            experimental: true
+          - node: latest
+            os: windows-latest
+            experimental: true
+    continue-on-error: ${{ matrix.experimental || false }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Install Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: ${{ matrix.node }}
+      - name: Install dependencies
+        run: npm install
+      - name: Run tests
+        run: npm test
+      - name: Store coverage
+        if: github.event_name == 'push'
+        uses: actions/upload-artifact@v6
+        with:
+          name: coverage-${{ strategy.job-index }}
+          path: coverage/lcov.info
+          if-no-files-found: error
+
+  Coverage:
+    name: Upload coverage # consolidated coverage for all matrix variations
+    needs: Test
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Download coverage
+        uses: actions/download-artifact@v7
+        with:
+          path: coverage-reports
+          pattern: coverage-*
+          merge-multiple: false
+      - name: Upload results to Codecov
+        uses: codecov/codecov-action@v6
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          slug: stevenvachon/hidefile
+          directory: coverage-reports

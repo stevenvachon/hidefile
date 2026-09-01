@@ -1,287 +1,222 @@
-"use strict";
-const fs = require("fs");
-const pathlib = require("path");
-const winattr = require("winattr");
+import { basename, dirname } from 'node:path';
+import { getAttributes, getAttributesSync, setAttributes, setAttributesSync } from 'winattr';
+import isWindows from 'is-windows';
+import { rename } from 'node:fs/promises';
+import { renameSync } from 'node:fs';
 
-const isWindows = process.platform.startsWith("win");
-const prefix = ".";
+const EMPTY = '';
+const PREFIX = '.';
 
+/**
+ * @param {string} before
+ * @param {string} after
+ * @param {boolean} hidden
+ */
+const change = async (before, after, hidden) => {
+  await rename(before, after);
 
+  if (isWindows()) {
+    await setAttributes(after, { hidden });
+  }
 
-const change = (before, after, attrs, callback) =>
-{
-	//if (before !== after)
-	//{
-		fs.rename(before, after, error =>
-		{
-			if (error==null && isWindows)
-			{
-				winattr.set(after, attrs, error =>
-				{
-					change_callback(error, after, callback);
-				});
-			}
-			else
-			{
-				change_callback(error, after, callback);
-			}
-		});
-	/*}
-	else if (isWindows)
-	{
-		winattr.set(after, attrs, error =>
-		{
-			change_callback(error, after, callback);
-		});
-	}
-	else
-	{
-		// Will not produce error if file does not exist and did not attempt to rename
-		callback(null, after);
-	}*/
+  return after;
 };
 
+/**
+ * @param {string} before
+ * @param {string} after
+ * @param {boolean} hidden
+ */
+const changeSync = (before, after, hidden) => {
+  renameSync(before, after);
 
+  if (isWindows()) {
+    setAttributesSync(after, { hidden });
+  }
 
-const change_callback = (error, after, callback) =>
-{
-	if (error == null)
-	{
-		callback(error, after);
-	}
-	else
-	{
-		// Avoids arguments being [error,undefined].length===2
-		callback(error);
-	}
+  return after;
 };
 
+/**
+ * @param {string} path
+ * @param {boolean} shouldHavePrefix
+ */
+const dotPrefixedPath = (path, shouldHavePrefix) =>
+  stringifyPath(parsePath(path), shouldHavePrefix);
 
+/**
+ * @param {string} path
+ */
+const getState = async path => {
+  const unix = isDotPrefixed(path);
 
-const changeSync = (before, after, attrs) =>
-{
-	//if (before !== after)
-	//{
-		fs.renameSync(before, after);
-	//}
-	// Else: will not produce error if file does not exist and did not attempt to rename
+  if (!isWindows()) {
+    return { unix, windows: false };
+  }
 
-	if (isWindows)
-	{
-		winattr.setSync(after, attrs);
-	}
-
-	return after;
+  const { hidden: windows } = await getAttributes(path);
+  return { unix, windows };
 };
 
+/**
+ * @param {string} path
+ */
+const getStateSync = path => {
+  const unix = isDotPrefixed(path);
 
+  if (!isWindows()) {
+    return { unix, windows: false };
+  }
 
-const parsePath = path =>
-{
-	const basename = pathlib.basename(path);
-	let dirname  = pathlib.dirname(path);
-
-	// Omit current dir marker
-	if (dirname === ".") dirname = "";
-
-	return {
-		basename: basename,
-		dirname: dirname,
-		prefixed: basename[0] === prefix
-	};
+  const { hidden: windows } = getAttributesSync(path);
+  return { unix, windows };
 };
 
+/**
+ * Hide a file or directory by adding a "." prefix.
+ * On Windows, the hidden attribute is also set.
+ * @param {string} path Path to a file or directory.
+ * @throws {Error} When `path` cannot be accessed.
+ * @throws {InaccessiblePathError} When `path` cannot be accessed by the native binding on Windows.
+ * @throws {TypeError} When `path` is not a string.
+ * @throws {UnknownError} When the fallback command fails unexpectedly on Windows.
+ */
+export const hide = path => Promise.try(() => change(path, dotPrefixedPath(path, true), true));
 
+/**
+ * Synchronously hide a file or directory by adding a "." prefix.
+ * On Windows, the hidden attribute is also set.
+ * @param {string} path Path to a file or directory.
+ * @throws {Error} When `path` cannot be accessed.
+ * @throws {InaccessiblePathError} When `path` cannot be accessed by the native binding on Windows.
+ * @throws {TypeError} When `path` is not a string.
+ * @throws {UnknownError} When the fallback command fails unexpectedly on Windows.
+ */
+export const hideSync = path => changeSync(path, dotPrefixedPath(path, true), true);
 
-const stat = (path, callback) =>
-{
-	const result =
-	{
-		unix: parsePath(path).prefixed,
-		windows: false
-	};
+/**
+ * Determine whether the basename of `path` starts with a "." prefix.
+ * @param {string} path Path to a file or directory.
+ * @throws {TypeError} When `path` is not a string.
+ */
+export const isDotPrefixed = path => basename(path).startsWith(PREFIX);
 
-	if (isWindows)
-	{
-		winattr.get(path, (error, data) =>
-		{
-			result.windows = (error!=null) ? false : data.hidden;
+/**
+ * Unix: prefixed. Windows: prefixed _and_ attributed.
+ * @param {{ unix: boolean, windows: boolean }} state
+ */
+const isFullyHidden = ({ unix, windows }) => unix && (!isWindows() || windows);
 
-			callback(error, result);
-		});
-	}
-	else
-	{
-		callback(null, result);
-	}
+/**
+ * Determine whether `path` is considered hidden.
+ * Unix: prefixed;
+ * Windows: prefixed _and_ attributed.
+ * @param {string} path Path to a file or directory.
+ * @throws {InaccessiblePathError} When `path` cannot be accessed by the native binding on Windows.
+ * @throws {TypeError} When `path` is not a string.
+ * @throws {UnknownError} When the fallback command fails unexpectedly on Windows.
+ */
+export const isHidden = path => getState(path).then(isFullyHidden);
+
+/**
+ * Synchronously determine whether `path` is considered hidden.
+ * Unix: prefixed;
+ * Windows: prefixed _and_ attributed.
+ * @param {string} path Path to a file or directory.
+ * @throws {InaccessiblePathError} When `path` cannot be accessed by the native binding on Windows.
+ * @throws {TypeError} When `path` is not a string.
+ * @throws {UnknownError} When the fallback command fails unexpectedly on Windows.
+ */
+export const isHiddenSync = path => isFullyHidden(getStateSync(path));
+
+/**
+ * Unix: prefixed;
+ * Windows: prefixed _or_ attributed.
+ * @param {{ unix: boolean, windows: boolean }} state
+ */
+const isPartiallyHidden = ({ unix, windows }) => unix || windows;
+
+/**
+ * @param {string} path
+ * @throws {TypeError} When `path` is not a string.
+ */
+const parsePath = path => {
+  const dir = dirname(path);
+  const name = basename(path);
+
+  return {
+    basename: name,
+    dirname: dir === PREFIX ? EMPTY : dir,
+    prefixed: name.startsWith(PREFIX),
+  };
 };
 
+/**
+ * Reveal a file or directory by removing a "." prefix.
+ * On Windows, the hidden attribute is also removed.
+ * @param {string} path Path to a file or directory.
+ * @throws {Error} When `path` cannot be accessed.
+ * @throws {InaccessiblePathError} When `path` cannot be accessed by the native binding on Windows.
+ * @throws {TypeError} When `path` is not a string.
+ * @throws {UnknownError} When the fallback command fails unexpectedly on Windows.
+ */
+export const reveal = path => Promise.try(() => change(path, dotPrefixedPath(path, false), false));
 
+/**
+ * Synchronously reveal a file or directory by removing a "." prefix.
+ * On Windows, the hidden attribute is also removed.
+ * @param {string} path Path to a file or directory.
+ * @throws {Error} When `path` cannot be accessed.
+ * @throws {InaccessiblePathError} When `path` cannot be accessed by the native binding on Windows.
+ * @throws {TypeError} When `path` is not a string.
+ * @throws {UnknownError} When the fallback command fails unexpectedly on Windows.
+ */
+export const revealSync = path => changeSync(path, dotPrefixedPath(path, false), false);
 
-const statSync = path =>
-{
-	const result =
-	{
-		unix: parsePath(path).prefixed,
-		windows: false
-	};
+/**
+ * Determine whether `path` should be treated as hidden.
+ * Unix: prefixed;
+ * Windows: prefixed _or_ attributed.
+ * @param {string} path Path to a file or directory.
+ * @throws {InaccessiblePathError} When `path` cannot be accessed by the native binding on Windows.
+ * @throws {TypeError} When `path` is not a string.
+ * @throws {UnknownError} When the fallback command fails unexpectedly on Windows.
+ */
+export const shouldBeHidden = path => getState(path).then(isPartiallyHidden);
 
-	if (isWindows)
-	{
-		result.windows = winattr.getSync(path).hidden;
-	}
+/**
+ * Synchronously determine whether `path` should be treated as hidden.
+ * Unix: prefixed;
+ * Windows: prefixed _or_ attributed.
+ * @param {string} path Path to a file or directory.
+ * @throws {InaccessiblePathError} When `path` cannot be accessed by the native binding on Windows.
+ * @throws {TypeError} When `path` is not a string.
+ * @throws {UnknownError} When the fallback command fails unexpectedly on Windows.
+ */
+export const shouldBeHiddenSync = path => isPartiallyHidden(getStateSync(path));
 
-	return result;
-};
+/**
+ * @param {{ basename: string, dirname: string, prefixed: boolean }} parts
+ * @param {boolean} shouldHavePrefix
+ */
+const stringifyPath = ({ basename, dirname, prefixed }, shouldHavePrefix) => {
+  let name = basename;
 
+  if (basename !== EMPTY) {
+    if (shouldHavePrefix && !prefixed) {
+      name = `${PREFIX}${basename}`;
+    } else if (!shouldHavePrefix && prefixed) {
+      name = basename.slice(1);
+    }
+  }
 
+  if (dirname === EMPTY) {
+    return name;
+  }
 
-const stringifyPath = (pathObj, shouldHavePrefix) =>
-{
-	let result = "";
+  if (name !== EMPTY && dirname !== '/' && !dirname.endsWith('/')) {
+    return `${dirname}/${name}`;
+  }
 
-	if (pathObj.basename !== "")
-	{
-		if (shouldHavePrefix && !pathObj.prefixed)
-		{
-			result = prefix + pathObj.basename;
-		}
-		else if (!shouldHavePrefix && pathObj.prefixed)
-		{
-			result = pathObj.basename.slice(1);
-		}
-		else
-		{
-			result = pathObj.basename;
-		}
-	}
-
-	if (pathObj.dirname !== "")
-	{
-		// If has a basename, and dirname is not "/" nor has a trailing slash (unlikely)
-		if (result!=="" && pathObj.dirname!=="/" && pathObj.dirname[pathObj.dirname.length-1]!=="/")
-		{
-			result = pathObj.dirname +"/"+ result;
-		}
-		else
-		{
-			result = pathObj.dirname + result;
-		}
-	}
-
-	return result;
-};
-
-
-
-//::: PUBLIC FUNCTIONS
-
-
-
-const hide = (path, callback) =>
-{
-	const newpath = stringifyPath( parsePath(path), true );
-
-	change(path, newpath, {hidden:true}, callback);
-};
-
-
-
-const hideSync = path =>
-{
-	const newpath = stringifyPath( parsePath(path), true );
-
-	return changeSync(path, newpath, {hidden:true});
-};
-
-
-
-const isDotPrefixed = path =>
-{
-	return pathlib.basename(path)[0] === prefix;
-};
-
-
-
-const isHidden = (path, callback) =>
-{
-	stat(path, (error, data) =>
-	{
-		if (error == null)
-		{
-			callback( null, data.unix && ((data.windows && isWindows) || !isWindows) );
-		}
-		else
-		{
-			callback(error);
-		}
-	});
-};
-
-
-
-const isHiddenSync = (path, callback) =>
-{
-	const data = statSync(path);
-
-	return data.unix && ((data.windows && isWindows) || !isWindows);
-};
-
-
-
-const reveal = (path, callback) =>
-{
-	const newpath = stringifyPath( parsePath(path), false );
-
-	change(path, newpath, {hidden:false}, callback);
-};
-
-
-
-const revealSync = (path, callback) =>
-{
-	const newpath = stringifyPath( parsePath(path), false );
-
-	return changeSync(path, newpath, {hidden:false});
-};
-
-
-
-const shouldBeHidden = (path, callback) =>
-{
-	stat(path, (error, data) =>
-	{
-		if (error == null)
-		{
-			callback( null, data.unix || data.windows );
-		}
-		else
-		{
-			callback(error);
-		}
-	});
-};
-
-
-
-const shouldBeHiddenSync = (path, callback) =>
-{
-	const data = statSync(path);
-
-	return data.unix || data.windows;
-};
-
-
-
-module.exports =
-{
-	hide,
-	hideSync,
-	isDotPrefixed,
-	isHidden,
-	isHiddenSync,
-	reveal,
-	revealSync,
-	shouldBeHidden,
-	shouldBeHiddenSync
+  return `${dirname}${name}`;
 };
